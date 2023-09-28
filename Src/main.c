@@ -124,6 +124,26 @@ void RAMFUNC My_LED_Toggle(Led_TypeDef Led)
   My_GPIO_TogglePin(My_LED_PORT[Led], My_LED_PIN[Led]);
 }
 
+HAL_StatusTypeDef FLASHAPI My_FLASH_Unlock(void)
+{
+  HAL_StatusTypeDef status = HAL_OK;
+
+  if(READ_BIT(FLASH->CR, FLASH_CR_LOCK) != RESET)
+  {
+    /* Authorize the FLASH Registers access */
+    WRITE_REG(FLASH->KEYR, FLASH_KEY1);
+    WRITE_REG(FLASH->KEYR, FLASH_KEY2);
+
+    /* Verify Flash is unlocked */
+    if(READ_BIT(FLASH->CR, FLASH_CR_LOCK) != RESET)
+    {
+      status = HAL_ERROR;
+    }
+  }
+
+  return status;
+}
+
 static int FLASHAPI WaitForLastFlashOperation(uint32_t Timeout)
 {
     /* Wait for the FLASH operation to complete by polling on BUSY flag to be reset.
@@ -208,6 +228,9 @@ static int NOINLINE FLASHAPI EraseFlash(FLASH_EraseInitTypeDef *pEraseInit, uint
 
 static int NOINLINE RAMFUNC DoErase(void)
 {
+	/* Unlock the Flash to enable the flash control register access *************/
+    My_FLASH_Unlock();
+
     /* Erase the user Flash area
       (area defined by FLASH_USER_START_ADDR and FLASH_USER_END_ADDR) ***********/
     /* Fill EraseInit structure*/
@@ -305,9 +328,6 @@ int main(void)
     HAL_Delay(1000);
 
     TIM2->CCMR1 = (0b100 << TIM_CCMR1_OC1M_Pos);
-
-    /* Unlock the Flash to enable the flash control register access *************/
-    HAL_FLASH_Unlock();
 
     if (!DoErase())
     {

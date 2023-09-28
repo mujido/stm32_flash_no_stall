@@ -46,21 +46,6 @@
 			<locationURI>copy_PARENT1/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_cortex.c</locationURI>
 		</link>
 		<link>
-			<name>Drivers/STM32F0xx_HAL_Driver/stm32f0xx_hal_dma.c</name>
-			<type>1</type>
-			<locationURI>copy_PARENT1/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_dma.c</locationURI>
-		</link>
-		<link>
-			<name>Drivers/STM32F0xx_HAL_Driver/stm32f0xx_hal_flash.c</name>
-			<type>1</type>
-			<locationURI>copy_PARENT1/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_flash.c</locationURI>
-		</link>
-		<link>
-			<name>Drivers/STM32F0xx_HAL_Driver/stm32f0xx_hal_flash_ex.c</name>
-			<type>1</type>
-			<locationURI>copy_PARENT1/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_flash_ex.c</locationURI>
-		</link>
-		<link>
 			<name>Drivers/STM32F0xx_HAL_Driver/stm32f0xx_hal_gpio.c</name>
 			<type>1</type>
 			<locationURI>copy_PARENT1/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_gpio.c</locationURI>
@@ -74,16 +59,6 @@
 			<name>Drivers/STM32F0xx_HAL_Driver/stm32f0xx_hal_rcc_ex.c</name>
 			<type>1</type>
 			<locationURI>copy_PARENT1/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rcc_ex.c</locationURI>
-		</link>
-		<link>
-			<name>Drivers/STM32F0xx_HAL_Driver/stm32f0xx_hal_uart.c</name>
-			<type>1</type>
-			<locationURI>copy_PARENT1/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_uart.c</locationURI>
-		</link>
-		<link>
-			<name>Drivers/STM32F0xx_HAL_Driver/stm32f0xx_hal_uart_ex.c</name>
-			<type>1</type>
-			<locationURI>copy_PARENT1/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_uart_ex.c</locationURI>
 		</link>
 		<link>
 			<name>Example/SW4STM32/startup_stm32f072xb.s</name>
