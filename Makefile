@@ -41,6 +41,7 @@ Src/flash.c \
 Src/led.c \
 Src/main.c \
 Src/timers.c \
+Src/syscalls.c \
 Src/stm32f0xx_it.c \
 Src/stm32f0xx_hal_msp.c \
 Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_tim.c \
