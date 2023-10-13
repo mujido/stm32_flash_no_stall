@@ -1,0 +1,6 @@
+{
+    "cmake.configureOnOpen": false,
+    "files.associations": {
+        "my_gpio.h": "c"
+    }
+}
