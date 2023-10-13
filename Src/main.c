@@ -19,6 +19,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "led.h"
+#include "flash.h"
+#include "timers.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -43,13 +45,6 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
-uint32_t Address = 0, PageError = 0;
-__IO uint32_t data32 = 0, MemoryProgramStatus = 0;
-
-/*Variable used for Erase procedure*/
-static FLASH_EraseInitTypeDef EraseInitStruct;
-
 
 /* USER CODE END PV */
 
@@ -100,6 +95,7 @@ int main(void)
 
     My_LED_On(LED6);
 
+  #if 0
     GPIO_InitTypeDef pa5_init =
     {
     	.Pin = GPIO_PIN_5,
@@ -129,7 +125,7 @@ int main(void)
     };
     HAL_GPIO_Init(GPIOB, &pb15_init);
     My_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
-
+#endif
 
     HAL_Delay(1000);
 
@@ -202,37 +198,55 @@ int main(void)
   */
 void SystemClock_Config(void)
 {
-  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+    RCC_ClkInitTypeDef RCC_ClkInitStruct;
+    RCC_OscInitTypeDef RCC_OscInitStruct;
 
-  /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
-  */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI48;
-  RCC_OscInitStruct.HSI48State = RCC_HSI48_ON;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI48;
-  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL2;
-  RCC_OscInitStruct.PLL.PREDIV = RCC_PREDIV_DIV2;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
-    Error_Handler();
-  }
+    /* Select HSI48 Oscillator as PLL source */
+    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI48;
+    RCC_OscInitStruct.HSI48State = RCC_HSI48_ON;
+    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+    RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI48;
+    RCC_OscInitStruct.PLL.PREDIV = RCC_PREDIV_DIV2;
+    RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL2;
+    if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+    {
+        Error_Handler();
+    }
 
-  /** Initializes the CPU, AHB and APB buses clocks
-  */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+    /* Select PLL as system clock source and configure the HCLK and PCLK1 clocks dividers */
+    RCC_ClkInitStruct.ClockType = (RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1);
+    RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+    RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+    RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+    if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
+    {
+        Error_Handler();
+    }
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
-  {
-    Error_Handler();
-  }
+    DBGMCU->APB1FZ = DBGMCU_APB1_FZ_DBG_TIM2_STOP;
 }
 
+static void Setup_Timer2(void)
+{
+	NVIC_EnableIRQ(TIM2_IRQn);
+	NVIC_SetPriority(TIM2_IRQn, 0);
+
+	/* (1) Enable the peripheral clock of Timer 2 */
+	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
+	TIM2->ARR = HAL_RCC_GetSysClockFreq() / 100000;
+	TIM2->DIER |= TIM_DIER_UIE;
+	TIM2->EGR = 0;
+
+	// Setup CH1 for Capture Output Mode
+	TIM2->CCR1 = UINT32_MAX;
+	TIM2->CCMR1 = (0b011 << TIM_CCMR1_OC1M_Pos);
+	TIM2->CCER = TIM_CCER_CC1E;
+
+	// Start TIM2
+	TIM2->CR1 |= TIM_CR1_URS | TIM_CR1_CEN;
+}
+
+#if 0
 /**
   * @brief GPIO Initialization Function
   * @param None
@@ -250,7 +264,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, NCS_MEMS_SPI_Pin|EXT_RESET_Pin|LD3_Pin|LD6_Pin
+  HAL_GPIO_WritePin(GPIOC, EXT_RESET_Pin|LD3_Pin|LD6_Pin
                           |LD4_Pin|LD5_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : NCS_MEMS_SPI_Pin EXT_RESET_Pin LD3_Pin LD6_Pin
@@ -304,11 +318,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   GPIO_InitStruct.Alternate = GPIO_AF0_SPI2;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
 }
+#endif
 
 /* USER CODE BEGIN 4 */
 

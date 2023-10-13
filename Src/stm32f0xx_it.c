@@ -157,4 +157,14 @@ void RAMFUNC DefaultHandler(void)
 	while(1);
 }
 
+void RAMFUNC TIM2_IRQHandler(void)
+{
+	TIM2->SR &= ~TIM_SR_UIF;
+
+	tick2++;
+	My_LED_Toggle(LED4);
+
+	TIM2->CCMR1 ^= (1U << TIM_CCMR1_OC1M_Pos);
+}
+
 /* USER CODE END 1 */

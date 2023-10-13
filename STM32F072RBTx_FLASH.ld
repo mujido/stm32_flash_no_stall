@@ -76,6 +76,14 @@ SECTIONS
     . = ALIGN(4);
   } >FLASH
 
+  .ram_isr_vector 0x20000000 :
+  {
+    ram_isr_vector = .;
+  	. += SIZEOF(.isr_vector);
+  	ram_isr_vector_end = .;
+  } >RAM
+  
+
   /* The program code and other data goes into FLASH */
   .text :
   {
@@ -140,7 +148,11 @@ SECTIONS
     _sdata = .;        /* create a global symbol at data start */
     *(.data)           /* .data sections */
     *(.data*)          /* .data* sections */
-
+    
+    . = ALIGN(4);
+    *(.RamFunc)
+    *(.RamFunc*)
+    
     . = ALIGN(4);
     _edata = .;        /* define a global symbol at data end */
   } >RAM AT> FLASH

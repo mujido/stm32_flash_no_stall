@@ -1,6 +1,7 @@
 
 #include "flash.h"
 #include "led.h"
+#include "timers.h"
 #include "stm32f0xx_hal.h"
 
 #define FLASH_USER_START_ADDR ADDR_FLASH_PAGE_16                 /* Start @ of user Flash area */

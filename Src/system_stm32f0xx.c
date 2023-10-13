@@ -102,6 +102,10 @@ uint32_t SystemCoreClock = 8000000;
 const uint8_t AHBPrescTable[16] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 6, 7, 8, 9};
 const uint8_t APBPrescTable[8]  = {0, 0, 0, 0, 1, 2, 3, 4};
 
+extern char ram_isr_vector;
+extern char ram_isr_vector_end;
+extern char g_pfnVectors[];
+
 /**
   * @}
   */
@@ -131,6 +135,7 @@ void SystemInit(void)
                          User can setups the default system clock (System clock source, PLL Multiplier
                          and Divider factors, AHB/APBx prescalers and Flash settings).
    */
+  memcpy(&ram_isr_vector, g_pfnVectors, &ram_isr_vector_end - &ram_isr_vector);
 }
 
 /**
