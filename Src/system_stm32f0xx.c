@@ -44,6 +44,7 @@
   */
 
 #include "stm32f0xx.h"
+#include <string.h>
 
 /**
   * @}
