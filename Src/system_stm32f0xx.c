@@ -130,13 +130,14 @@ extern char g_pfnVectors[];
   */
 void SystemInit(void)
 {
-  /* NOTE :SystemInit(): This function is called at startup just after reset and 
-                         before branch to main program. This call is made inside
-                         the "startup_stm32f0xx.s" file.
-                         User can setups the default system clock (System clock source, PLL Multiplier
-                         and Divider factors, AHB/APBx prescalers and Flash settings).
-   */
+  // Copy ISR into beginning of RAM
   memcpy(&ram_isr_vector, g_pfnVectors, &ram_isr_vector_end - &ram_isr_vector);
+
+  // Remap RAM to 0x0000_0000
+  uint32_t tmp = SYSCFG->CFGR1;
+  tmp &= ~(SYSCFG_CFGR1_MEM_MODE_Msk);
+  tmp |= 0x3 << SYSCFG_CFGR1_MEM_MODE_Pos;
+  SYSCFG->CFGR1 = tmp;
 }
 
 /**
