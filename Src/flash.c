@@ -33,7 +33,7 @@ My_StatusTypeDef FLASHAPI My_FLASH_Unlock(void)
   return status;
 }
 
-static int FLASHAPI WaitForLastFlashOperation(uint32_t Timeout)
+static My_StatusTypeDef FLASHAPI WaitForLastFlashOperation(uint32_t Timeout)
 {
     /* Wait for the FLASH operation to complete by polling on BUSY flag to be reset.
        Even if the FLASH operation fails, the BUSY flag will be reset and an error
@@ -45,7 +45,7 @@ static int FLASHAPI WaitForLastFlashOperation(uint32_t Timeout)
     {
         if ((Timeout == 0U) || ((GetTick() - tickstart) > Timeout))
         {
-            return 0;
+            return My_TIMEOUT;
         }
     }
 
@@ -59,11 +59,11 @@ static int FLASHAPI WaitForLastFlashOperation(uint32_t Timeout)
     if (__FLASH_GET_FLAG(FLASH_FLAG_WRPERR) ||
         __FLASH_GET_FLAG(FLASH_FLAG_PGERR))
     {
-        return 0;
+        return My_ERROR;
     }
 
     /* There is no error flag set */
-    return 1;
+    return My_OK;
 }
 
 static void NOINLINE FLASHAPI My_PageErase(uint32_t PageAddress)
@@ -79,13 +79,13 @@ static void NOINLINE FLASHAPI My_PageErase(uint32_t PageAddress)
     SET_BIT(FLASH->CR, FLASH_CR_STRT);
 }
 
-static int NOINLINE FLASHAPI EraseFlash(My_EraseInitTypeDef *pEraseInit, uint32_t *PageError)
+static My_StatusTypeDef NOINLINE FLASHAPI EraseFlash(My_EraseInitTypeDef *pEraseInit, uint32_t *PageError)
 {
-	int status = 1;
+	My_StatusTypeDef status = My_ERROR;
 
     /* Page Erase requested on address located on bank1 */
     /* Wait for last operation to be completed */
-    if (WaitForLastFlashOperation((uint32_t)FLASH_TIMEOUT_VALUE))
+    if (HAL_OK == WaitForLastFlashOperation((uint32_t)FLASH_TIMEOUT_VALUE))
     {
         /*Initialization of PageError variable*/
         *PageError = 0xFFFFFFFFU;
@@ -103,7 +103,7 @@ static int NOINLINE FLASHAPI EraseFlash(My_EraseInitTypeDef *pEraseInit, uint32_
             /* If the erase operation is completed, disable the PER Bit */
             CLEAR_BIT(FLASH->CR, FLASH_CR_PER);
 
-            if (!status)
+            if (status != My_OK)
             {
                 /* In case of error, stop erase procedure and return the faulty address */
                 *PageError = address;
@@ -115,10 +115,12 @@ static int NOINLINE FLASHAPI EraseFlash(My_EraseInitTypeDef *pEraseInit, uint32_
     return status;
 }
 
-int NOINLINE RAMFUNC DoErase(void)
+My_StatusTypeDef NOINLINE RAMFUNC DoErase(void)
 {
 	/* Unlock the Flash to enable the flash control register access *************/
-    My_FLASH_Unlock();
+  My_StatusTypeDef status = My_FLASH_Unlock();
+  if (My_OK != status)
+    return status;
 
     /* Erase the user Flash area
       (area defined by FLASH_USER_START_ADDR and FLASH_USER_END_ADDR) ***********/
@@ -135,8 +137,11 @@ int NOINLINE RAMFUNC DoErase(void)
     uint32_t PageError = 0;
 
     enable_counter = 1;
-    int rc = EraseFlash(&EraseInitStruct, &PageError);
+    status = EraseFlash(&EraseInitStruct, &PageError);
     enable_counter = 0;
+
+    if (My_OK != status)
+      return status;
 
     My_LED_Off(LED_GREEN);
 
@@ -149,5 +154,6 @@ int NOINLINE RAMFUNC DoErase(void)
         Delay(350);
     }
 
-    return rc;
+    return status;
+
 }

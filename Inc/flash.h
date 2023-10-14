@@ -69,7 +69,7 @@
 
 #define FLASHAPI RAMFUNC
 
-typedef enum 
+typedef enum
 {
   My_OK       = 0x00U,
   My_ERROR    = 0x01U,
@@ -90,4 +90,4 @@ typedef struct
                                                           
 } My_EraseInitTypeDef;
 
-int NOINLINE RAMFUNC DoErase(void);
+My_StatusTypeDef NOINLINE RAMFUNC DoErase(void);

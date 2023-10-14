@@ -129,23 +129,19 @@ int main(void)
 
     TIM2->CCMR1 = (0b100 << TIM_CCMR1_OC1M_Pos);
 
-    if (!DoErase())
+    if (My_OK != DoErase())
     {
-        /*
-          Error occurred while page erase.
-          User can add here some code to deal with this error.
-          PageError will contain the faulty page and then to know the code error on this page,
-          user can call function 'HAL_FLASH_GetError()'
-        */
-        /* Infinite loop */
-        while (1)
-        {
-            My_LED_On(LED5);
-        }
+      while (1)
+      {
+        My_LED_Off(LED_RED);
+        Delay(200);
+        My_LED_On(LED_RED);
+        Delay(200);
+      }
     }
 
-	/* No error detected. Switch on LED3*/
-	My_LED_On(LED3);
+	/* No error detected. */
+	My_LED_On(LED_RED);
 
 	/* Infinite loop */
     while (1)
