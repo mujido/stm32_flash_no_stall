@@ -1,0 +1,286 @@
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\cc4IhALi.s 			page 1
+
+
+   1              		.cpu cortex-m0
+   2              		.arch armv6s-m
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.file	"led.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.file 1 "Src/led.c"
+  18              		.section	.text.My_LED_Init,"ax",%progbits
+  19              		.align	1
+  20              		.global	My_LED_Init
+  21              		.syntax unified
+  22              		.code	16
+  23              		.thumb_func
+  25              	My_LED_Init:
+  26              	.LVL0:
+  27              	.LFB43:
+   1:Src/led.c     **** 
+   2:Src/led.c     **** #include "led.h"
+   3:Src/led.c     **** #include "stm32f0xx_hal.h"
+   4:Src/led.c     **** 
+   5:Src/led.c     **** GPIO_TypeDef* My_LED_PORT[LEDn] = {LED3_GPIO_PORT,
+   6:Src/led.c     ****                                 LED4_GPIO_PORT,
+   7:Src/led.c     ****                                 LED5_GPIO_PORT,
+   8:Src/led.c     ****                                 LED6_GPIO_PORT};
+   9:Src/led.c     **** 
+  10:Src/led.c     **** const uint16_t My_LED_PIN[LEDn] = {LED3_PIN,
+  11:Src/led.c     ****                                 LED4_PIN,
+  12:Src/led.c     ****                                 LED5_PIN,
+  13:Src/led.c     ****                                 LED6_PIN};
+  14:Src/led.c     **** 
+  15:Src/led.c     **** void My_LED_Init(Led_TypeDef Led)
+  16:Src/led.c     **** {
+  28              		.loc 1 16 1 view -0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 40
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		.loc 1 16 1 is_stmt 0 view .LVU1
+  33 0000 70B5     		push	{r4, r5, r6, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 16
+  36              		.cfi_offset 4, -16
+  37              		.cfi_offset 5, -12
+  38              		.cfi_offset 6, -8
+  39              		.cfi_offset 14, -4
+  40 0002 8AB0     		sub	sp, sp, #40
+  41              	.LCFI1:
+  42              		.cfi_def_cfa_offset 56
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\cc4IhALi.s 			page 2
+
+
+  17:Src/led.c     ****   GPIO_InitTypeDef  GPIO_InitStruct;
+  43              		.loc 1 17 3 is_stmt 1 view .LVU2
+  18:Src/led.c     ****   
+  19:Src/led.c     ****   /* Enable the GPIO_LED Clock */
+  20:Src/led.c     ****   LEDx_GPIO_CLK_ENABLE(Led);
+  44              		.loc 1 20 3 view .LVU3
+  45              		.loc 1 20 3 view .LVU4
+  46 0004 0028     		cmp	r0, #0
+  47 0006 1FD1     		bne	.L2
+  48              		.loc 1 20 3 discriminator 1 view .LVU5
+  49              	.LBB2:
+  50              		.loc 1 20 3 discriminator 1 view .LVU6
+  51              		.loc 1 20 3 discriminator 1 view .LVU7
+  52 0008 234B     		ldr	r3, .L8
+  53 000a 5A69     		ldr	r2, [r3, #20]
+  54 000c 8021     		movs	r1, #128
+  55 000e 0903     		lsls	r1, r1, #12
+  56 0010 0A43     		orrs	r2, r1
+  57 0012 5A61     		str	r2, [r3, #20]
+  58              		.loc 1 20 3 discriminator 1 view .LVU8
+  59 0014 5B69     		ldr	r3, [r3, #20]
+  60 0016 0B40     		ands	r3, r1
+  61 0018 0193     		str	r3, [sp, #4]
+  62              		.loc 1 20 3 discriminator 1 view .LVU9
+  63 001a 019B     		ldr	r3, [sp, #4]
+  64              	.LBE2:
+  65              		.loc 1 20 3 discriminator 1 view .LVU10
+  66              	.L3:
+  67              		.loc 1 20 3 discriminator 12 view .LVU11
+  68              		.loc 1 20 3 discriminator 12 view .LVU12
+  21:Src/led.c     **** 
+  22:Src/led.c     ****   /* Configure the GPIO_LED pin */
+  23:Src/led.c     ****   GPIO_InitStruct.Pin = My_LED_PIN[Led];
+  69              		.loc 1 23 3 discriminator 12 view .LVU13
+  70              		.loc 1 23 35 is_stmt 0 discriminator 12 view .LVU14
+  71 001c 1F4B     		ldr	r3, .L8+4
+  72 001e 4200     		lsls	r2, r0, #1
+  73 0020 D65A     		ldrh	r6, [r2, r3]
+  74              		.loc 1 23 23 discriminator 12 view .LVU15
+  75 0022 0596     		str	r6, [sp, #20]
+  24:Src/led.c     ****   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  76              		.loc 1 24 3 is_stmt 1 discriminator 12 view .LVU16
+  77              		.loc 1 24 24 is_stmt 0 discriminator 12 view .LVU17
+  78 0024 0123     		movs	r3, #1
+  79 0026 0693     		str	r3, [sp, #24]
+  25:Src/led.c     ****   GPIO_InitStruct.Pull = GPIO_PULLUP; /* GPIO_PuPd_DOWN */
+  80              		.loc 1 25 3 is_stmt 1 discriminator 12 view .LVU18
+  81              		.loc 1 25 24 is_stmt 0 discriminator 12 view .LVU19
+  82 0028 0793     		str	r3, [sp, #28]
+  26:Src/led.c     ****   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  83              		.loc 1 26 3 is_stmt 1 discriminator 12 view .LVU20
+  84              		.loc 1 26 25 is_stmt 0 discriminator 12 view .LVU21
+  85 002a 0233     		adds	r3, r3, #2
+  86 002c 0893     		str	r3, [sp, #32]
+  27:Src/led.c     ****   
+  28:Src/led.c     ****   HAL_GPIO_Init(My_LED_PORT[Led], &GPIO_InitStruct);
+  87              		.loc 1 28 3 is_stmt 1 discriminator 12 view .LVU22
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\cc4IhALi.s 			page 3
+
+
+  88 002e 1C4D     		ldr	r5, .L8+8
+  89 0030 8400     		lsls	r4, r0, #2
+  90 0032 6059     		ldr	r0, [r4, r5]
+  91              	.LVL1:
+  92              		.loc 1 28 3 is_stmt 0 discriminator 12 view .LVU23
+  93 0034 05A9     		add	r1, sp, #20
+  94 0036 FFF7FEFF 		bl	HAL_GPIO_Init
+  95              	.LVL2:
+  29:Src/led.c     ****   
+  30:Src/led.c     ****   HAL_GPIO_WritePin(My_LED_PORT[Led], My_LED_PIN[Led], GPIO_PIN_RESET); 
+  96              		.loc 1 30 3 is_stmt 1 discriminator 12 view .LVU24
+  97 003a 6059     		ldr	r0, [r4, r5]
+  98 003c 0022     		movs	r2, #0
+  99 003e 3100     		movs	r1, r6
+ 100 0040 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 101              	.LVL3:
+  31:Src/led.c     **** }
+ 102              		.loc 1 31 1 is_stmt 0 discriminator 12 view .LVU25
+ 103 0044 0AB0     		add	sp, sp, #40
+ 104              		@ sp needed
+ 105 0046 70BD     		pop	{r4, r5, r6, pc}
+ 106              	.LVL4:
+ 107              	.L2:
+  20:Src/led.c     **** 
+ 108              		.loc 1 20 3 is_stmt 1 discriminator 2 view .LVU26
+ 109 0048 0128     		cmp	r0, #1
+ 110 004a 0ED0     		beq	.L6
+  20:Src/led.c     **** 
+ 111              		.loc 1 20 3 discriminator 5 view .LVU27
+ 112 004c 0228     		cmp	r0, #2
+ 113 004e 17D0     		beq	.L7
+  20:Src/led.c     **** 
+ 114              		.loc 1 20 3 discriminator 8 view .LVU28
+ 115 0050 0328     		cmp	r0, #3
+ 116 0052 E3D1     		bne	.L3
+  20:Src/led.c     **** 
+ 117              		.loc 1 20 3 discriminator 10 view .LVU29
+ 118              	.LBB3:
+  20:Src/led.c     **** 
+ 119              		.loc 1 20 3 discriminator 10 view .LVU30
+  20:Src/led.c     **** 
+ 120              		.loc 1 20 3 discriminator 10 view .LVU31
+ 121 0054 104B     		ldr	r3, .L8
+ 122 0056 5A69     		ldr	r2, [r3, #20]
+ 123 0058 8021     		movs	r1, #128
+ 124 005a 0903     		lsls	r1, r1, #12
+ 125 005c 0A43     		orrs	r2, r1
+ 126 005e 5A61     		str	r2, [r3, #20]
+  20:Src/led.c     **** 
+ 127              		.loc 1 20 3 discriminator 10 view .LVU32
+ 128 0060 5B69     		ldr	r3, [r3, #20]
+ 129 0062 0B40     		ands	r3, r1
+ 130 0064 0493     		str	r3, [sp, #16]
+  20:Src/led.c     **** 
+ 131              		.loc 1 20 3 discriminator 10 view .LVU33
+ 132 0066 049B     		ldr	r3, [sp, #16]
+ 133 0068 D8E7     		b	.L3
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\cc4IhALi.s 			page 4
+
+
+ 134              	.L6:
+ 135              	.LBE3:
+  20:Src/led.c     **** 
+ 136              		.loc 1 20 3 discriminator 4 view .LVU34
+ 137              	.LBB4:
+  20:Src/led.c     **** 
+ 138              		.loc 1 20 3 discriminator 4 view .LVU35
+  20:Src/led.c     **** 
+ 139              		.loc 1 20 3 discriminator 4 view .LVU36
+ 140 006a 0B4B     		ldr	r3, .L8
+ 141 006c 5A69     		ldr	r2, [r3, #20]
+ 142 006e 8021     		movs	r1, #128
+ 143 0070 0903     		lsls	r1, r1, #12
+ 144 0072 0A43     		orrs	r2, r1
+ 145 0074 5A61     		str	r2, [r3, #20]
+  20:Src/led.c     **** 
+ 146              		.loc 1 20 3 discriminator 4 view .LVU37
+ 147 0076 5B69     		ldr	r3, [r3, #20]
+ 148 0078 0B40     		ands	r3, r1
+ 149 007a 0293     		str	r3, [sp, #8]
+  20:Src/led.c     **** 
+ 150              		.loc 1 20 3 discriminator 4 view .LVU38
+ 151 007c 029B     		ldr	r3, [sp, #8]
+ 152              	.LBE4:
+  20:Src/led.c     **** 
+ 153              		.loc 1 20 3 discriminator 4 view .LVU39
+ 154 007e CDE7     		b	.L3
+ 155              	.L7:
+  20:Src/led.c     **** 
+ 156              		.loc 1 20 3 discriminator 7 view .LVU40
+ 157              	.LBB5:
+  20:Src/led.c     **** 
+ 158              		.loc 1 20 3 discriminator 7 view .LVU41
+  20:Src/led.c     **** 
+ 159              		.loc 1 20 3 discriminator 7 view .LVU42
+ 160 0080 054B     		ldr	r3, .L8
+ 161 0082 5A69     		ldr	r2, [r3, #20]
+ 162 0084 8021     		movs	r1, #128
+ 163 0086 0903     		lsls	r1, r1, #12
+ 164 0088 0A43     		orrs	r2, r1
+ 165 008a 5A61     		str	r2, [r3, #20]
+  20:Src/led.c     **** 
+ 166              		.loc 1 20 3 discriminator 7 view .LVU43
+ 167 008c 5B69     		ldr	r3, [r3, #20]
+ 168 008e 0B40     		ands	r3, r1
+ 169 0090 0393     		str	r3, [sp, #12]
+  20:Src/led.c     **** 
+ 170              		.loc 1 20 3 discriminator 7 view .LVU44
+ 171 0092 039B     		ldr	r3, [sp, #12]
+ 172              	.LBE5:
+  20:Src/led.c     **** 
+ 173              		.loc 1 20 3 discriminator 7 view .LVU45
+ 174 0094 C2E7     		b	.L3
+ 175              	.L9:
+ 176 0096 C046     		.align	2
+ 177              	.L8:
+ 178 0098 00100240 		.word	1073876992
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\cc4IhALi.s 			page 5
+
+
+ 179 009c 00000000 		.word	My_LED_PIN
+ 180 00a0 00000000 		.word	My_LED_PORT
+ 181              		.cfi_endproc
+ 182              	.LFE43:
+ 184              		.global	My_LED_PIN
+ 185              		.section	.rodata.My_LED_PIN,"a"
+ 186              		.align	2
+ 189              	My_LED_PIN:
+ 190 0000 4000     		.short	64
+ 191 0002 0001     		.short	256
+ 192 0004 0002     		.short	512
+ 193 0006 8000     		.short	128
+ 194              		.global	My_LED_PORT
+ 195              		.section	.data.My_LED_PORT,"aw"
+ 196              		.align	2
+ 199              	My_LED_PORT:
+ 200 0000 00080048 		.word	1207961600
+ 201 0004 00080048 		.word	1207961600
+ 202 0008 00080048 		.word	1207961600
+ 203 000c 00080048 		.word	1207961600
+ 204              		.text
+ 205              	.Letext0:
+ 206              		.file 2 "c:\\arm-gnu-toolchain-12.3.rel1-mingw-w64-i686-arm-none-eabi\\arm-none-eabi\\include\\mac
+ 207              		.file 3 "c:\\arm-gnu-toolchain-12.3.rel1-mingw-w64-i686-arm-none-eabi\\arm-none-eabi\\include\\sys
+ 208              		.file 4 "Drivers/CMSIS/Device/ST/STM32F0xx/Include/stm32f072xb.h"
+ 209              		.file 5 "Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_gpio.h"
+ 210              		.file 6 "Inc/led.h"
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\cc4IhALi.s 			page 6
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 led.c
+C:\Users\kurt\AppData\Local\Temp\cc4IhALi.s:19     .text.My_LED_Init:00000000 $t
+C:\Users\kurt\AppData\Local\Temp\cc4IhALi.s:25     .text.My_LED_Init:00000000 My_LED_Init
+C:\Users\kurt\AppData\Local\Temp\cc4IhALi.s:178    .text.My_LED_Init:00000098 $d
+C:\Users\kurt\AppData\Local\Temp\cc4IhALi.s:189    .rodata.My_LED_PIN:00000000 My_LED_PIN
+C:\Users\kurt\AppData\Local\Temp\cc4IhALi.s:199    .data.My_LED_PORT:00000000 My_LED_PORT
+C:\Users\kurt\AppData\Local\Temp\cc4IhALi.s:186    .rodata.My_LED_PIN:00000000 $d
+C:\Users\kurt\AppData\Local\Temp\cc4IhALi.s:196    .data.My_LED_PORT:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_GPIO_Init
+HAL_GPIO_WritePin

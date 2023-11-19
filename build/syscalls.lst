@@ -1,0 +1,144 @@
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\ccySeKVs.s 			page 1
+
+
+   1              		.cpu cortex-m0
+   2              		.arch armv6s-m
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.file	"syscalls.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.file 1 "Src/syscalls.c"
+  18              		.section	.text._close,"ax",%progbits
+  19              		.align	1
+  20              		.global	_close
+  21              		.syntax unified
+  22              		.code	16
+  23              		.thumb_func
+  25              	_close:
+  26              	.LFB0:
+   1:Src/syscalls.c **** // Shut compiler up about these
+   2:Src/syscalls.c **** 
+   3:Src/syscalls.c **** int _close(int)
+   4:Src/syscalls.c **** {
+  27              		.loc 1 4 1 view -0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              		@ link register save eliminated.
+   5:Src/syscalls.c ****     return 0;
+  32              		.loc 1 5 5 view .LVU1
+   6:Src/syscalls.c **** }
+  33              		.loc 1 6 1 is_stmt 0 view .LVU2
+  34 0000 0020     		movs	r0, #0
+  35              		@ sp needed
+  36 0002 7047     		bx	lr
+  37              		.cfi_endproc
+  38              	.LFE0:
+  40              		.section	.text._lseek,"ax",%progbits
+  41              		.align	1
+  42              		.global	_lseek
+  43              		.syntax unified
+  44              		.code	16
+  45              		.thumb_func
+  47              	_lseek:
+  48              	.LFB1:
+   7:Src/syscalls.c **** 
+   8:Src/syscalls.c **** int _lseek()
+   9:Src/syscalls.c **** {
+  49              		.loc 1 9 1 is_stmt 1 view -0
+  50              		.cfi_startproc
+  51              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\ccySeKVs.s 			page 2
+
+
+  52              		@ frame_needed = 0, uses_anonymous_args = 0
+  53              		@ link register save eliminated.
+  10:Src/syscalls.c ****     return 0;
+  54              		.loc 1 10 5 view .LVU4
+  11:Src/syscalls.c **** }
+  55              		.loc 1 11 1 is_stmt 0 view .LVU5
+  56 0000 0020     		movs	r0, #0
+  57              		@ sp needed
+  58 0002 7047     		bx	lr
+  59              		.cfi_endproc
+  60              	.LFE1:
+  62              		.section	.text._read,"ax",%progbits
+  63              		.align	1
+  64              		.global	_read
+  65              		.syntax unified
+  66              		.code	16
+  67              		.thumb_func
+  69              	_read:
+  70              	.LFB2:
+  12:Src/syscalls.c **** 
+  13:Src/syscalls.c **** int _read()
+  14:Src/syscalls.c **** {
+  71              		.loc 1 14 1 is_stmt 1 view -0
+  72              		.cfi_startproc
+  73              		@ args = 0, pretend = 0, frame = 0
+  74              		@ frame_needed = 0, uses_anonymous_args = 0
+  75              		@ link register save eliminated.
+  15:Src/syscalls.c ****     return 0;
+  76              		.loc 1 15 5 view .LVU7
+  16:Src/syscalls.c **** }
+  77              		.loc 1 16 1 is_stmt 0 view .LVU8
+  78 0000 0020     		movs	r0, #0
+  79              		@ sp needed
+  80 0002 7047     		bx	lr
+  81              		.cfi_endproc
+  82              	.LFE2:
+  84              		.section	.text._write,"ax",%progbits
+  85              		.align	1
+  86              		.global	_write
+  87              		.syntax unified
+  88              		.code	16
+  89              		.thumb_func
+  91              	_write:
+  92              	.LFB3:
+  17:Src/syscalls.c **** 
+  18:Src/syscalls.c **** int _write()
+  19:Src/syscalls.c **** {
+  93              		.loc 1 19 1 is_stmt 1 view -0
+  94              		.cfi_startproc
+  95              		@ args = 0, pretend = 0, frame = 0
+  96              		@ frame_needed = 0, uses_anonymous_args = 0
+  97              		@ link register save eliminated.
+  20:Src/syscalls.c ****     return 0;
+  98              		.loc 1 20 5 view .LVU10
+  21:Src/syscalls.c **** }
+  99              		.loc 1 21 1 is_stmt 0 view .LVU11
+ 100 0000 0020     		movs	r0, #0
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\ccySeKVs.s 			page 3
+
+
+ 101              		@ sp needed
+ 102 0002 7047     		bx	lr
+ 103              		.cfi_endproc
+ 104              	.LFE3:
+ 106              		.text
+ 107              	.Letext0:
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\ccySeKVs.s 			page 4
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 syscalls.c
+C:\Users\kurt\AppData\Local\Temp\ccySeKVs.s:19     .text._close:00000000 $t
+C:\Users\kurt\AppData\Local\Temp\ccySeKVs.s:25     .text._close:00000000 _close
+C:\Users\kurt\AppData\Local\Temp\ccySeKVs.s:41     .text._lseek:00000000 $t
+C:\Users\kurt\AppData\Local\Temp\ccySeKVs.s:47     .text._lseek:00000000 _lseek
+C:\Users\kurt\AppData\Local\Temp\ccySeKVs.s:63     .text._read:00000000 $t
+C:\Users\kurt\AppData\Local\Temp\ccySeKVs.s:69     .text._read:00000000 _read
+C:\Users\kurt\AppData\Local\Temp\ccySeKVs.s:85     .text._write:00000000 $t
+C:\Users\kurt\AppData\Local\Temp\ccySeKVs.s:91     .text._write:00000000 _write
+
+NO UNDEFINED SYMBOLS

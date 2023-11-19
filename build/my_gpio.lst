@@ -1,0 +1,137 @@
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\ccjf0GAd.s 			page 1
+
+
+   1              		.cpu cortex-m0
+   2              		.arch armv6s-m
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.file	"my_gpio.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.file 1 "Src/my_gpio.c"
+  18              		.section	.RamFunc,"ax",%progbits
+  19              		.align	1
+  20              		.global	My_GPIO_WritePin
+  21              		.syntax unified
+  22              		.code	16
+  23              		.thumb_func
+  25              	My_GPIO_WritePin:
+  26              	.LVL0:
+  27              	.LFB40:
+   1:Src/my_gpio.c **** #include "my_gpio.h"
+   2:Src/my_gpio.c **** 
+   3:Src/my_gpio.c **** void RAMFUNC My_GPIO_WritePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState)
+   4:Src/my_gpio.c **** {
+  28              		.loc 1 4 1 view -0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+   5:Src/my_gpio.c ****   if (PinState != GPIO_PIN_RESET)
+  33              		.loc 1 5 3 view .LVU1
+  34              		.loc 1 5 6 is_stmt 0 view .LVU2
+  35 0000 002A     		cmp	r2, #0
+  36 0002 01D0     		beq	.L2
+   6:Src/my_gpio.c ****   {
+   7:Src/my_gpio.c ****     GPIOx->BSRR = (uint32_t)GPIO_Pin;
+  37              		.loc 1 7 5 is_stmt 1 view .LVU3
+  38              		.loc 1 7 17 is_stmt 0 view .LVU4
+  39 0004 8161     		str	r1, [r0, #24]
+  40              	.L1:
+   8:Src/my_gpio.c ****   }
+   9:Src/my_gpio.c ****   else
+  10:Src/my_gpio.c ****   {
+  11:Src/my_gpio.c ****     GPIOx->BRR = (uint32_t)GPIO_Pin;
+  12:Src/my_gpio.c ****   }
+  13:Src/my_gpio.c **** }
+  41              		.loc 1 13 1 view .LVU5
+  42              		@ sp needed
+  43 0006 7047     		bx	lr
+  44              	.L2:
+  11:Src/my_gpio.c ****   }
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\ccjf0GAd.s 			page 2
+
+
+  45              		.loc 1 11 5 is_stmt 1 view .LVU6
+  11:Src/my_gpio.c ****   }
+  46              		.loc 1 11 16 is_stmt 0 view .LVU7
+  47 0008 8162     		str	r1, [r0, #40]
+  48              		.loc 1 13 1 view .LVU8
+  49 000a FCE7     		b	.L1
+  50              		.cfi_endproc
+  51              	.LFE40:
+  53              		.align	1
+  54              		.global	My_GPIO_TogglePin
+  55              		.syntax unified
+  56              		.code	16
+  57              		.thumb_func
+  59              	My_GPIO_TogglePin:
+  60              	.LVL1:
+  61              	.LFB41:
+  14:Src/my_gpio.c **** 
+  15:Src/my_gpio.c **** void RAMFUNC My_GPIO_TogglePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
+  16:Src/my_gpio.c **** {
+  62              		.loc 1 16 1 is_stmt 1 view -0
+  63              		.cfi_startproc
+  64              		@ args = 0, pretend = 0, frame = 0
+  65              		@ frame_needed = 0, uses_anonymous_args = 0
+  66              		@ link register save eliminated.
+  17:Src/my_gpio.c ****   uint32_t odr;
+  67              		.loc 1 17 3 view .LVU10
+  18:Src/my_gpio.c **** 
+  19:Src/my_gpio.c ****   /* get current Output Data Register value */
+  20:Src/my_gpio.c ****   odr = GPIOx->ODR;
+  68              		.loc 1 20 3 view .LVU11
+  69              		.loc 1 20 7 is_stmt 0 view .LVU12
+  70 000c 4269     		ldr	r2, [r0, #20]
+  71              	.LVL2:
+  21:Src/my_gpio.c **** 
+  22:Src/my_gpio.c ****   /* Set selected pins that were at low level, and reset ones that were high */
+  23:Src/my_gpio.c ****   GPIOx->BSRR = ((odr & GPIO_Pin) << 16u) | (~odr & GPIO_Pin);
+  72              		.loc 1 23 3 is_stmt 1 view .LVU13
+  73              		.loc 1 23 23 is_stmt 0 view .LVU14
+  74 000e 1300     		movs	r3, r2
+  75 0010 0B40     		ands	r3, r1
+  76              		.loc 1 23 35 view .LVU15
+  77 0012 1B04     		lsls	r3, r3, #16
+  78              		.loc 1 23 51 view .LVU16
+  79 0014 9143     		bics	r1, r2
+  80              	.LVL3:
+  81              		.loc 1 23 43 view .LVU17
+  82 0016 0B43     		orrs	r3, r1
+  83              		.loc 1 23 15 view .LVU18
+  84 0018 8361     		str	r3, [r0, #24]
+  24:Src/my_gpio.c **** }
+  85              		.loc 1 24 1 view .LVU19
+  86              		@ sp needed
+  87 001a 7047     		bx	lr
+  88              		.cfi_endproc
+  89              	.LFE41:
+  91              		.text
+  92              	.Letext0:
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\ccjf0GAd.s 			page 3
+
+
+  93              		.file 2 "c:\\arm-gnu-toolchain-12.3.rel1-mingw-w64-i686-arm-none-eabi\\arm-none-eabi\\include\\mac
+  94              		.file 3 "c:\\arm-gnu-toolchain-12.3.rel1-mingw-w64-i686-arm-none-eabi\\arm-none-eabi\\include\\sys
+  95              		.file 4 "Drivers/CMSIS/Device/ST/STM32F0xx/Include/stm32f072xb.h"
+  96              		.file 5 "Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_gpio.h"
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\ccjf0GAd.s 			page 4
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 my_gpio.c
+C:\Users\kurt\AppData\Local\Temp\ccjf0GAd.s:19     .RamFunc:00000000 $t
+C:\Users\kurt\AppData\Local\Temp\ccjf0GAd.s:25     .RamFunc:00000000 My_GPIO_WritePin
+C:\Users\kurt\AppData\Local\Temp\ccjf0GAd.s:59     .RamFunc:0000000c My_GPIO_TogglePin
+
+NO UNDEFINED SYMBOLS

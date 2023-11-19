@@ -1,0 +1,1008 @@
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s 			page 1
+
+
+   1              		.cpu cortex-m0
+   2              		.arch armv6s-m
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.file	"flash.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.file 1 "Src/flash.c"
+  18              		.section	.RamFunc,"ax",%progbits
+  19              		.align	1
+  20              		.syntax unified
+  21              		.code	16
+  22              		.thumb_func
+  24              	My_LED_On:
+  25              	.LVL0:
+  26              	.LFB40:
+  27              		.file 2 "Inc/led.h"
+   1:Inc/led.h     **** #pragma once
+   2:Inc/led.h     **** 
+   3:Inc/led.h     **** #include "main.h"
+   4:Inc/led.h     **** #include "my_gpio.h"
+   5:Inc/led.h     **** 
+   6:Inc/led.h     **** #define LEDn 4
+   7:Inc/led.h     **** 
+   8:Inc/led.h     **** #define LED3_PIN                         GPIO_PIN_6
+   9:Inc/led.h     **** #define LED3_GPIO_PORT                   GPIOC
+  10:Inc/led.h     **** #define LED3_GPIO_CLK_ENABLE()           __HAL_RCC_GPIOC_CLK_ENABLE()  
+  11:Inc/led.h     **** #define LED3_GPIO_CLK_DISABLE()          __HAL_RCC_GPIOC_CLK_DISABLE() 
+  12:Inc/led.h     **** 
+  13:Inc/led.h     **** #define LED4_PIN                         GPIO_PIN_8
+  14:Inc/led.h     **** #define LED4_GPIO_PORT                   GPIOC
+  15:Inc/led.h     **** #define LED4_GPIO_CLK_ENABLE()           __HAL_RCC_GPIOC_CLK_ENABLE()  
+  16:Inc/led.h     **** #define LED4_GPIO_CLK_DISABLE()          __HAL_RCC_GPIOC_CLK_DISABLE() 
+  17:Inc/led.h     ****   
+  18:Inc/led.h     **** #define LED5_PIN                         GPIO_PIN_9
+  19:Inc/led.h     **** #define LED5_GPIO_PORT                   GPIOC
+  20:Inc/led.h     **** #define LED5_GPIO_CLK_ENABLE()           __HAL_RCC_GPIOC_CLK_ENABLE()  
+  21:Inc/led.h     **** #define LED5_GPIO_CLK_DISABLE()          __HAL_RCC_GPIOC_CLK_DISABLE()  
+  22:Inc/led.h     **** 
+  23:Inc/led.h     **** #define LED6_PIN                         GPIO_PIN_7
+  24:Inc/led.h     **** #define LED6_GPIO_PORT                   GPIOC
+  25:Inc/led.h     **** #define LED6_GPIO_CLK_ENABLE()           __HAL_RCC_GPIOC_CLK_ENABLE()  
+  26:Inc/led.h     **** #define LED6_GPIO_CLK_DISABLE()          __HAL_RCC_GPIOC_CLK_DISABLE() 
+  27:Inc/led.h     **** 
+  28:Inc/led.h     **** #define LEDx_GPIO_CLK_ENABLE(__LED__) do { if((__LED__) == LED3) LED3_GPIO_CLK_ENABLE(); else \
+  29:Inc/led.h     ****                                            if((__LED__) == LED4) LED4_GPIO_CLK_ENABLE(); else \
+  30:Inc/led.h     ****                                            if((__LED__) == LED5) LED5_GPIO_CLK_ENABLE(); else \
+  31:Inc/led.h     ****                                            if((__LED__) == LED6) LED6_GPIO_CLK_ENABLE();} while(0)
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s 			page 2
+
+
+  32:Inc/led.h     **** 
+  33:Inc/led.h     **** #define LEDx_GPIO_CLK_DISABLE(__LED__)  (((__LED__) == LED3) ? LED3_GPIO_CLK_DISABLE() :\
+  34:Inc/led.h     ****                                          ((__LED__) == LED4) ? LED4_GPIO_CLK_DISABLE() :\
+  35:Inc/led.h     ****                                          ((__LED__) == LED5) ? LED5_GPIO_CLK_DISABLE() : \
+  36:Inc/led.h     ****                                          ((__LED__) == LED6) ? LED6_GPIO_CLK_DISABLE() : 0 )
+  37:Inc/led.h     **** typedef enum 
+  38:Inc/led.h     **** {
+  39:Inc/led.h     ****     LED3 = 0,
+  40:Inc/led.h     ****     LED4 = 1,
+  41:Inc/led.h     ****     LED5 = 2,
+  42:Inc/led.h     ****     LED6 = 3,
+  43:Inc/led.h     ****     /* Color led aliases */
+  44:Inc/led.h     ****     LED_RED    = LED3,
+  45:Inc/led.h     ****     LED_ORANGE = LED4,
+  46:Inc/led.h     ****     LED_GREEN  = LED5,
+  47:Inc/led.h     ****     LED_BLUE   = LED6
+  48:Inc/led.h     **** } Led_TypeDef;
+  49:Inc/led.h     **** 
+  50:Inc/led.h     **** extern GPIO_TypeDef* My_LED_PORT[LEDn];
+  51:Inc/led.h     **** extern const uint16_t My_LED_PIN[LEDn];
+  52:Inc/led.h     **** 
+  53:Inc/led.h     **** static inline void RAMFUNC My_LED_On(Led_TypeDef Led)
+  54:Inc/led.h     **** {
+  28              		.loc 2 54 1 view -0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		.loc 2 54 1 is_stmt 0 view .LVU1
+  33 0000 10B5     		push	{r4, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 8
+  36              		.cfi_offset 4, -8
+  37              		.cfi_offset 14, -4
+  55:Inc/led.h     ****   My_GPIO_WritePin(My_LED_PORT[Led], My_LED_PIN[Led], GPIO_PIN_SET);
+  38              		.loc 2 55 3 is_stmt 1 view .LVU2
+  39              		.loc 2 55 48 is_stmt 0 view .LVU3
+  40 0002 054B     		ldr	r3, .L2
+  41 0004 4200     		lsls	r2, r0, #1
+  42 0006 D15A     		ldrh	r1, [r2, r3]
+  43              		.loc 2 55 3 view .LVU4
+  44 0008 044B     		ldr	r3, .L2+4
+  45 000a 8000     		lsls	r0, r0, #2
+  46              	.LVL1:
+  47              		.loc 2 55 3 view .LVU5
+  48 000c C058     		ldr	r0, [r0, r3]
+  49 000e 0122     		movs	r2, #1
+  50 0010 FFF7FEFF 		bl	My_GPIO_WritePin
+  51              	.LVL2:
+  56:Inc/led.h     **** }
+  52              		.loc 2 56 1 view .LVU6
+  53              		@ sp needed
+  54 0014 10BD     		pop	{r4, pc}
+  55              	.L3:
+  56 0016 C046     		.align	2
+  57              	.L2:
+  58 0018 00000000 		.word	My_LED_PIN
+  59 001c 00000000 		.word	My_LED_PORT
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s 			page 3
+
+
+  60              		.cfi_endproc
+  61              	.LFE40:
+  63              		.align	1
+  64              		.syntax unified
+  65              		.code	16
+  66              		.thumb_func
+  68              	My_LED_Off:
+  69              	.LVL3:
+  70              	.LFB41:
+  57:Inc/led.h     **** 
+  58:Inc/led.h     **** 
+  59:Inc/led.h     **** static inline void RAMFUNC My_LED_Off(Led_TypeDef Led)
+  60:Inc/led.h     **** {
+  71              		.loc 2 60 1 is_stmt 1 view -0
+  72              		.cfi_startproc
+  73              		@ args = 0, pretend = 0, frame = 0
+  74              		@ frame_needed = 0, uses_anonymous_args = 0
+  75              		.loc 2 60 1 is_stmt 0 view .LVU8
+  76 0020 10B5     		push	{r4, lr}
+  77              	.LCFI1:
+  78              		.cfi_def_cfa_offset 8
+  79              		.cfi_offset 4, -8
+  80              		.cfi_offset 14, -4
+  61:Inc/led.h     ****   My_GPIO_WritePin(My_LED_PORT[Led], My_LED_PIN[Led], GPIO_PIN_RESET);
+  81              		.loc 2 61 3 is_stmt 1 view .LVU9
+  82              		.loc 2 61 48 is_stmt 0 view .LVU10
+  83 0022 054B     		ldr	r3, .L5
+  84 0024 4200     		lsls	r2, r0, #1
+  85 0026 D15A     		ldrh	r1, [r2, r3]
+  86              		.loc 2 61 3 view .LVU11
+  87 0028 044B     		ldr	r3, .L5+4
+  88 002a 8000     		lsls	r0, r0, #2
+  89              	.LVL4:
+  90              		.loc 2 61 3 view .LVU12
+  91 002c C058     		ldr	r0, [r0, r3]
+  92 002e 0022     		movs	r2, #0
+  93 0030 FFF7FEFF 		bl	My_GPIO_WritePin
+  94              	.LVL5:
+  62:Inc/led.h     **** }
+  95              		.loc 2 62 1 view .LVU13
+  96              		@ sp needed
+  97 0034 10BD     		pop	{r4, pc}
+  98              	.L6:
+  99 0036 C046     		.align	2
+ 100              	.L5:
+ 101 0038 00000000 		.word	My_LED_PIN
+ 102 003c 00000000 		.word	My_LED_PORT
+ 103              		.cfi_endproc
+ 104              	.LFE41:
+ 106              		.align	1
+ 107              		.syntax unified
+ 108              		.code	16
+ 109              		.thumb_func
+ 111              	WaitForLastFlashOperation:
+ 112              	.LVL6:
+ 113              	.LFB46:
+   1:Src/flash.c   **** 
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s 			page 4
+
+
+   2:Src/flash.c   **** #include "flash.h"
+   3:Src/flash.c   **** #include "led.h"
+   4:Src/flash.c   **** #include "timers.h"
+   5:Src/flash.c   **** #include "stm32f0xx_hal.h"
+   6:Src/flash.c   **** 
+   7:Src/flash.c   **** #define FLASH_USER_START_ADDR ADDR_FLASH_PAGE_16                 /* Start @ of user Flash area */
+   8:Src/flash.c   **** #define FLASH_USER_END_ADDR ADDR_FLASH_PAGE_63 + FLASH_PAGE_SIZE /* End @ of user Flash area */
+   9:Src/flash.c   **** 
+  10:Src/flash.c   **** #define __FLASH_GET_FLAG(__FLAG__) (((FLASH->SR) & (__FLAG__)) == (__FLAG__))
+  11:Src/flash.c   **** #define __FLASH_CLEAR_FLAG(__FLAG__)   ((FLASH->SR) = (__FLAG__))
+  12:Src/flash.c   **** 
+  13:Src/flash.c   **** extern volatile int enable_counter;
+  14:Src/flash.c   **** extern volatile unsigned tickcounter;
+  15:Src/flash.c   **** 
+  16:Src/flash.c   **** My_StatusTypeDef FLASHAPI My_FLASH_Unlock(void)
+  17:Src/flash.c   **** {
+  18:Src/flash.c   ****   My_StatusTypeDef status = My_OK;
+  19:Src/flash.c   **** 
+  20:Src/flash.c   ****   if(READ_BIT(FLASH->CR, FLASH_CR_LOCK) != RESET)
+  21:Src/flash.c   ****   {
+  22:Src/flash.c   ****     /* Authorize the FLASH Registers access */
+  23:Src/flash.c   ****     WRITE_REG(FLASH->KEYR, FLASH_KEY1);
+  24:Src/flash.c   ****     WRITE_REG(FLASH->KEYR, FLASH_KEY2);
+  25:Src/flash.c   **** 
+  26:Src/flash.c   ****     /* Verify Flash is unlocked */
+  27:Src/flash.c   ****     if(READ_BIT(FLASH->CR, FLASH_CR_LOCK) != RESET)
+  28:Src/flash.c   ****     {
+  29:Src/flash.c   ****       status = My_ERROR;
+  30:Src/flash.c   ****     }
+  31:Src/flash.c   ****   }
+  32:Src/flash.c   **** 
+  33:Src/flash.c   ****   return status;
+  34:Src/flash.c   **** }
+  35:Src/flash.c   **** 
+  36:Src/flash.c   **** static My_StatusTypeDef FLASHAPI WaitForLastFlashOperation(uint32_t Timeout)
+  37:Src/flash.c   **** {
+ 114              		.loc 1 37 1 is_stmt 1 view -0
+ 115              		.cfi_startproc
+ 116              		@ args = 0, pretend = 0, frame = 0
+ 117              		@ frame_needed = 0, uses_anonymous_args = 0
+ 118              		@ link register save eliminated.
+  38:Src/flash.c   ****     /* Wait for the FLASH operation to complete by polling on BUSY flag to be reset.
+  39:Src/flash.c   ****        Even if the FLASH operation fails, the BUSY flag will be reset and an error
+  40:Src/flash.c   ****        flag will be set */
+  41:Src/flash.c   **** 
+  42:Src/flash.c   ****     uint32_t tickstart = GetTick();
+ 119              		.loc 1 42 5 view .LVU15
+ 120              	.LBB6:
+ 121              	.LBI6:
+ 122              		.file 3 "Inc/timers.h"
+   1:Inc/timers.h  **** #pragma once
+   2:Inc/timers.h  **** 
+   3:Inc/timers.h  **** #include "main.h"
+   4:Inc/timers.h  **** 
+   5:Inc/timers.h  **** extern volatile uint32_t uwTick;
+   6:Inc/timers.h  **** extern volatile int enable_counter;
+   7:Inc/timers.h  **** extern volatile unsigned tickcounter;
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s 			page 5
+
+
+   8:Inc/timers.h  **** extern volatile uint32_t tick2;
+   9:Inc/timers.h  **** 
+  10:Inc/timers.h  **** static inline RAMFUNC uint32_t GetTick(void)
+ 123              		.loc 3 10 32 view .LVU16
+ 124              	.LBB7:
+  11:Inc/timers.h  **** {
+  12:Inc/timers.h  ****     return uwTick;
+ 125              		.loc 3 12 5 view .LVU17
+ 126              		.loc 3 12 12 is_stmt 0 view .LVU18
+ 127 0040 124B     		ldr	r3, .L18
+ 128 0042 1A68     		ldr	r2, [r3]
+ 129              	.LVL7:
+ 130              		.loc 3 12 12 view .LVU19
+ 131              	.LBE7:
+ 132              	.LBE6:
+  43:Src/flash.c   **** 
+  44:Src/flash.c   ****     while (__FLASH_GET_FLAG(FLASH_FLAG_BSY))
+ 133              		.loc 1 44 5 is_stmt 1 view .LVU20
+ 134              	.L8:
+ 135              		.loc 1 44 12 view .LVU21
+ 136 0044 124B     		ldr	r3, .L18+4
+ 137 0046 DB68     		ldr	r3, [r3, #12]
+ 138 0048 DB07     		lsls	r3, r3, #31
+ 139 004a 08D5     		bpl	.L17
+  45:Src/flash.c   ****     {
+  46:Src/flash.c   ****         if ((Timeout == 0U) || ((GetTick() - tickstart) > Timeout))
+ 140              		.loc 1 46 9 view .LVU22
+ 141              		.loc 1 46 12 is_stmt 0 view .LVU23
+ 142 004c 0028     		cmp	r0, #0
+ 143 004e 17D0     		beq	.L12
+ 144              	.LBB8:
+ 145              	.LBI8:
+  10:Inc/timers.h  **** {
+ 146              		.loc 3 10 32 is_stmt 1 view .LVU24
+ 147              	.LBB9:
+ 148              		.loc 3 12 5 view .LVU25
+ 149              		.loc 3 12 12 is_stmt 0 view .LVU26
+ 150 0050 0E4B     		ldr	r3, .L18
+ 151 0052 1B68     		ldr	r3, [r3]
+ 152              	.LBE9:
+ 153              	.LBE8:
+ 154              		.loc 1 46 44 view .LVU27
+ 155 0054 9B1A     		subs	r3, r3, r2
+ 156              		.loc 1 46 29 view .LVU28
+ 157 0056 8342     		cmp	r3, r0
+ 158 0058 F4D9     		bls	.L8
+  47:Src/flash.c   ****         {
+  48:Src/flash.c   ****             return My_TIMEOUT;
+ 159              		.loc 1 48 20 view .LVU29
+ 160 005a 0320     		movs	r0, #3
+ 161              	.LVL8:
+ 162              		.loc 1 48 20 view .LVU30
+ 163 005c 11E0     		b	.L9
+ 164              	.LVL9:
+ 165              	.L17:
+  49:Src/flash.c   ****         }
+  50:Src/flash.c   ****     }
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s 			page 6
+
+
+  51:Src/flash.c   **** 
+  52:Src/flash.c   ****     /* Check FLASH End of Operation flag  */
+  53:Src/flash.c   ****     if (__FLASH_GET_FLAG(FLASH_FLAG_EOP))
+ 166              		.loc 1 53 5 is_stmt 1 view .LVU31
+ 167              		.loc 1 53 9 is_stmt 0 view .LVU32
+ 168 005e 0C4B     		ldr	r3, .L18+4
+ 169 0060 DB68     		ldr	r3, [r3, #12]
+ 170              		.loc 1 53 8 view .LVU33
+ 171 0062 9B06     		lsls	r3, r3, #26
+ 172 0064 02D5     		bpl	.L11
+  54:Src/flash.c   ****     {
+  55:Src/flash.c   ****         /* Clear FLASH End of Operation pending bit */
+  56:Src/flash.c   ****         __FLASH_CLEAR_FLAG(FLASH_FLAG_EOP);
+ 173              		.loc 1 56 9 is_stmt 1 view .LVU34
+ 174 0066 0A4B     		ldr	r3, .L18+4
+ 175 0068 2022     		movs	r2, #32
+ 176              	.LVL10:
+ 177              		.loc 1 56 9 is_stmt 0 view .LVU35
+ 178 006a DA60     		str	r2, [r3, #12]
+ 179              	.L11:
+  57:Src/flash.c   ****     }
+  58:Src/flash.c   **** 
+  59:Src/flash.c   ****     if (__FLASH_GET_FLAG(FLASH_FLAG_WRPERR) ||
+ 180              		.loc 1 59 5 is_stmt 1 view .LVU36
+ 181              		.loc 1 59 9 is_stmt 0 view .LVU37
+ 182 006c 084B     		ldr	r3, .L18+4
+ 183 006e DB68     		ldr	r3, [r3, #12]
+ 184              		.loc 1 59 8 view .LVU38
+ 185 0070 DB06     		lsls	r3, r3, #27
+ 186 0072 07D4     		bmi	.L14
+  60:Src/flash.c   ****         __FLASH_GET_FLAG(FLASH_FLAG_PGERR))
+ 187              		.loc 1 60 9 discriminator 1 view .LVU39
+ 188 0074 064B     		ldr	r3, .L18+4
+ 189 0076 DB68     		ldr	r3, [r3, #12]
+  59:Src/flash.c   ****         __FLASH_GET_FLAG(FLASH_FLAG_PGERR))
+ 190              		.loc 1 59 45 discriminator 1 view .LVU40
+ 191 0078 5B07     		lsls	r3, r3, #29
+ 192 007a 05D4     		bmi	.L15
+  61:Src/flash.c   ****     {
+  62:Src/flash.c   ****         return My_ERROR;
+  63:Src/flash.c   ****     }
+  64:Src/flash.c   **** 
+  65:Src/flash.c   ****     /* There is no error flag set */
+  66:Src/flash.c   ****     return My_OK;
+ 193              		.loc 1 66 12 view .LVU41
+ 194 007c 0020     		movs	r0, #0
+ 195              	.LVL11:
+ 196              		.loc 1 66 12 view .LVU42
+ 197 007e 00E0     		b	.L9
+ 198              	.LVL12:
+ 199              	.L12:
+  48:Src/flash.c   ****         }
+ 200              		.loc 1 48 20 view .LVU43
+ 201 0080 0320     		movs	r0, #3
+ 202              	.LVL13:
+ 203              	.L9:
+  67:Src/flash.c   **** }
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s 			page 7
+
+
+ 204              		.loc 1 67 1 view .LVU44
+ 205              		@ sp needed
+ 206 0082 7047     		bx	lr
+ 207              	.LVL14:
+ 208              	.L14:
+  62:Src/flash.c   ****     }
+ 209              		.loc 1 62 16 view .LVU45
+ 210 0084 0120     		movs	r0, #1
+ 211              	.LVL15:
+  62:Src/flash.c   ****     }
+ 212              		.loc 1 62 16 view .LVU46
+ 213 0086 FCE7     		b	.L9
+ 214              	.LVL16:
+ 215              	.L15:
+  62:Src/flash.c   ****     }
+ 216              		.loc 1 62 16 view .LVU47
+ 217 0088 0120     		movs	r0, #1
+ 218              	.LVL17:
+  62:Src/flash.c   ****     }
+ 219              		.loc 1 62 16 view .LVU48
+ 220 008a FAE7     		b	.L9
+ 221              	.L19:
+ 222              		.align	2
+ 223              	.L18:
+ 224 008c 00000000 		.word	uwTick
+ 225 0090 00200240 		.word	1073881088
+ 226              		.cfi_endproc
+ 227              	.LFE46:
+ 229              		.align	1
+ 230              		.syntax unified
+ 231              		.code	16
+ 232              		.thumb_func
+ 234              	My_PageErase:
+ 235              	.LVL18:
+ 236              	.LFB47:
+  68:Src/flash.c   **** 
+  69:Src/flash.c   **** static void NOINLINE FLASHAPI My_PageErase(uint32_t PageAddress)
+  70:Src/flash.c   **** {
+ 237              		.loc 1 70 1 is_stmt 1 view -0
+ 238              		.cfi_startproc
+ 239              		@ args = 0, pretend = 0, frame = 0
+ 240              		@ frame_needed = 0, uses_anonymous_args = 0
+ 241              		.loc 1 70 1 is_stmt 0 view .LVU50
+ 242 0094 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 243              	.LCFI2:
+ 244              		.cfi_def_cfa_offset 24
+ 245              		.cfi_offset 3, -24
+ 246              		.cfi_offset 4, -20
+ 247              		.cfi_offset 5, -16
+ 248              		.cfi_offset 6, -12
+ 249              		.cfi_offset 7, -8
+ 250              		.cfi_offset 14, -4
+ 251 0096 0700     		movs	r7, r0
+  71:Src/flash.c   ****     /* Proceed to erase the page */
+  72:Src/flash.c   **** 	My_GPIO_TogglePin(GPIOB, GPIO_PIN_15);
+ 252              		.loc 1 72 2 is_stmt 1 view .LVU51
+ 253 0098 8026     		movs	r6, #128
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s 			page 8
+
+
+ 254 009a 3602     		lsls	r6, r6, #8
+ 255 009c 0B4D     		ldr	r5, .L21
+ 256 009e 3100     		movs	r1, r6
+ 257 00a0 2800     		movs	r0, r5
+ 258              	.LVL19:
+ 259              		.loc 1 72 2 is_stmt 0 view .LVU52
+ 260 00a2 FFF7FEFF 		bl	My_GPIO_TogglePin
+ 261              	.LVL20:
+  73:Src/flash.c   ****     SET_BIT(FLASH->CR, FLASH_CR_PER);
+ 262              		.loc 1 73 5 is_stmt 1 view .LVU53
+ 263 00a6 0A4C     		ldr	r4, .L21+4
+ 264 00a8 2369     		ldr	r3, [r4, #16]
+ 265 00aa 0222     		movs	r2, #2
+ 266 00ac 1343     		orrs	r3, r2
+ 267 00ae 2361     		str	r3, [r4, #16]
+  74:Src/flash.c   **** 
+  75:Src/flash.c   **** 	My_GPIO_TogglePin(GPIOB, GPIO_PIN_15);
+ 268              		.loc 1 75 2 view .LVU54
+ 269 00b0 3100     		movs	r1, r6
+ 270 00b2 2800     		movs	r0, r5
+ 271 00b4 FFF7FEFF 		bl	My_GPIO_TogglePin
+ 272              	.LVL21:
+  76:Src/flash.c   ****     WRITE_REG(FLASH->AR, PageAddress);
+ 273              		.loc 1 76 5 view .LVU55
+ 274 00b8 6761     		str	r7, [r4, #20]
+  77:Src/flash.c   **** 
+  78:Src/flash.c   **** 	My_GPIO_TogglePin(GPIOB, GPIO_PIN_15);
+ 275              		.loc 1 78 2 view .LVU56
+ 276 00ba 3100     		movs	r1, r6
+ 277 00bc 2800     		movs	r0, r5
+ 278 00be FFF7FEFF 		bl	My_GPIO_TogglePin
+ 279              	.LVL22:
+  79:Src/flash.c   ****     SET_BIT(FLASH->CR, FLASH_CR_STRT);
+ 280              		.loc 1 79 5 view .LVU57
+ 281 00c2 2369     		ldr	r3, [r4, #16]
+ 282 00c4 4022     		movs	r2, #64
+ 283 00c6 1343     		orrs	r3, r2
+ 284 00c8 2361     		str	r3, [r4, #16]
+  80:Src/flash.c   **** }
+ 285              		.loc 1 80 1 is_stmt 0 view .LVU58
+ 286              		@ sp needed
+ 287              	.LVL23:
+ 288              		.loc 1 80 1 view .LVU59
+ 289 00ca F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 290              	.L22:
+ 291              		.align	2
+ 292              	.L21:
+ 293 00cc 00040048 		.word	1207960576
+ 294 00d0 00200240 		.word	1073881088
+ 295              		.cfi_endproc
+ 296              	.LFE47:
+ 298              		.align	1
+ 299              		.syntax unified
+ 300              		.code	16
+ 301              		.thumb_func
+ 303              	EraseFlash:
+ 304              	.LVL24:
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s 			page 9
+
+
+ 305              	.LFB48:
+  81:Src/flash.c   **** 
+  82:Src/flash.c   **** static My_StatusTypeDef NOINLINE FLASHAPI EraseFlash(My_EraseInitTypeDef *pEraseInit, uint32_t *Pag
+  83:Src/flash.c   **** {
+ 306              		.loc 1 83 1 is_stmt 1 view -0
+ 307              		.cfi_startproc
+ 308              		@ args = 0, pretend = 0, frame = 0
+ 309              		@ frame_needed = 0, uses_anonymous_args = 0
+ 310              		.loc 1 83 1 is_stmt 0 view .LVU61
+ 311 00d4 70B5     		push	{r4, r5, r6, lr}
+ 312              	.LCFI3:
+ 313              		.cfi_def_cfa_offset 16
+ 314              		.cfi_offset 4, -16
+ 315              		.cfi_offset 5, -12
+ 316              		.cfi_offset 6, -8
+ 317              		.cfi_offset 14, -4
+ 318 00d6 0500     		movs	r5, r0
+ 319 00d8 0E00     		movs	r6, r1
+  84:Src/flash.c   **** 	My_StatusTypeDef status = My_ERROR;
+ 320              		.loc 1 84 2 is_stmt 1 view .LVU62
+ 321              	.LVL25:
+  85:Src/flash.c   **** 
+  86:Src/flash.c   ****     /* Page Erase requested on address located on bank1 */
+  87:Src/flash.c   ****     /* Wait for last operation to be completed */
+  88:Src/flash.c   ****     if (HAL_OK == WaitForLastFlashOperation((uint32_t)FLASH_TIMEOUT_VALUE))
+ 322              		.loc 1 88 5 view .LVU63
+ 323              		.loc 1 88 19 is_stmt 0 view .LVU64
+ 324 00da 1348     		ldr	r0, .L29
+ 325              	.LVL26:
+ 326              		.loc 1 88 19 view .LVU65
+ 327 00dc FFF7B0FF 		bl	WaitForLastFlashOperation
+ 328              	.LVL27:
+ 329              		.loc 1 88 8 view .LVU66
+ 330 00e0 0028     		cmp	r0, #0
+ 331 00e2 1ED1     		bne	.L28
+  89:Src/flash.c   ****     {
+  90:Src/flash.c   ****         /*Initialization of PageError variable*/
+  91:Src/flash.c   ****         *PageError = 0xFFFFFFFFU;
+ 332              		.loc 1 91 9 is_stmt 1 view .LVU67
+ 333              		.loc 1 91 20 is_stmt 0 view .LVU68
+ 334 00e4 0123     		movs	r3, #1
+ 335 00e6 5B42     		rsbs	r3, r3, #0
+ 336 00e8 3360     		str	r3, [r6]
+  92:Src/flash.c   **** 
+  93:Src/flash.c   ****         /* Erase page by page to be done*/
+  94:Src/flash.c   ****         for (uint32_t address = pEraseInit->PageAddress;
+ 337              		.loc 1 94 9 is_stmt 1 view .LVU69
+ 338              	.LBB10:
+ 339              		.loc 1 94 14 view .LVU70
+ 340              		.loc 1 94 23 is_stmt 0 view .LVU71
+ 341 00ea 6C68     		ldr	r4, [r5, #4]
+ 342              	.LVL28:
+ 343              		.loc 1 94 23 view .LVU72
+ 344              	.LBE10:
+  84:Src/flash.c   **** 
+ 345              		.loc 1 84 19 view .LVU73
+ 346 00ec 0130     		adds	r0, r0, #1
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s 			page 10
+
+
+ 347              	.LBB11:
+ 348              		.loc 1 94 9 view .LVU74
+ 349 00ee 03E0     		b	.L25
+ 350              	.LVL29:
+ 351              	.L26:
+  95:Src/flash.c   ****              address < ((pEraseInit->NbPages * FLASH_PAGE_SIZE) + pEraseInit->PageAddress);
+  96:Src/flash.c   ****              address += FLASH_PAGE_SIZE)
+ 352              		.loc 1 96 22 is_stmt 1 view .LVU75
+ 353 00f0 8023     		movs	r3, #128
+ 354 00f2 1B01     		lsls	r3, r3, #4
+ 355 00f4 9C46     		mov	ip, r3
+ 356 00f6 6444     		add	r4, r4, ip
+ 357              	.LVL30:
+ 358              	.L25:
+  95:Src/flash.c   ****              address < ((pEraseInit->NbPages * FLASH_PAGE_SIZE) + pEraseInit->PageAddress);
+ 359              		.loc 1 95 22 view .LVU76
+  95:Src/flash.c   ****              address < ((pEraseInit->NbPages * FLASH_PAGE_SIZE) + pEraseInit->PageAddress);
+ 360              		.loc 1 95 36 is_stmt 0 view .LVU77
+ 361 00f8 AB68     		ldr	r3, [r5, #8]
+  95:Src/flash.c   ****              address < ((pEraseInit->NbPages * FLASH_PAGE_SIZE) + pEraseInit->PageAddress);
+ 362              		.loc 1 95 46 view .LVU78
+ 363 00fa DB02     		lsls	r3, r3, #11
+  95:Src/flash.c   ****              address < ((pEraseInit->NbPages * FLASH_PAGE_SIZE) + pEraseInit->PageAddress);
+ 364              		.loc 1 95 77 view .LVU79
+ 365 00fc 6A68     		ldr	r2, [r5, #4]
+  95:Src/flash.c   ****              address < ((pEraseInit->NbPages * FLASH_PAGE_SIZE) + pEraseInit->PageAddress);
+ 366              		.loc 1 95 65 view .LVU80
+ 367 00fe 9B18     		adds	r3, r3, r2
+  95:Src/flash.c   ****              address < ((pEraseInit->NbPages * FLASH_PAGE_SIZE) + pEraseInit->PageAddress);
+ 368              		.loc 1 95 22 view .LVU81
+ 369 0100 A342     		cmp	r3, r4
+ 370 0102 0FD9     		bls	.L24
+  97:Src/flash.c   ****         {
+  98:Src/flash.c   ****             My_PageErase(address);
+ 371              		.loc 1 98 13 is_stmt 1 view .LVU82
+ 372 0104 2000     		movs	r0, r4
+ 373              	.LVL31:
+ 374              		.loc 1 98 13 is_stmt 0 view .LVU83
+ 375 0106 FFF7C5FF 		bl	My_PageErase
+ 376              	.LVL32:
+  99:Src/flash.c   **** 
+ 100:Src/flash.c   ****             /* Wait for last operation to be completed */
+ 101:Src/flash.c   ****             status = WaitForLastFlashOperation((uint32_t)FLASH_TIMEOUT_VALUE);
+ 377              		.loc 1 101 13 is_stmt 1 view .LVU84
+ 378              		.loc 1 101 22 is_stmt 0 view .LVU85
+ 379 010a 0748     		ldr	r0, .L29
+ 380 010c FFF798FF 		bl	WaitForLastFlashOperation
+ 381              	.LVL33:
+ 102:Src/flash.c   **** 
+ 103:Src/flash.c   ****             /* If the erase operation is completed, disable the PER Bit */
+ 104:Src/flash.c   ****             CLEAR_BIT(FLASH->CR, FLASH_CR_PER);
+ 382              		.loc 1 104 13 is_stmt 1 view .LVU86
+ 383 0110 064A     		ldr	r2, .L29+4
+ 384 0112 1369     		ldr	r3, [r2, #16]
+ 385 0114 0221     		movs	r1, #2
+ 386 0116 8B43     		bics	r3, r1
+ 387 0118 1361     		str	r3, [r2, #16]
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s 			page 11
+
+
+ 105:Src/flash.c   **** 
+ 106:Src/flash.c   ****             if (status != My_OK)
+ 388              		.loc 1 106 13 view .LVU87
+ 389              		.loc 1 106 16 is_stmt 0 view .LVU88
+ 390 011a 0028     		cmp	r0, #0
+ 391 011c E8D0     		beq	.L26
+ 107:Src/flash.c   ****             {
+ 108:Src/flash.c   ****                 /* In case of error, stop erase procedure and return the faulty address */
+ 109:Src/flash.c   ****                 *PageError = address;
+ 392              		.loc 1 109 17 is_stmt 1 view .LVU89
+ 393              		.loc 1 109 28 is_stmt 0 view .LVU90
+ 394 011e 3460     		str	r4, [r6]
+ 110:Src/flash.c   ****                 break;
+ 395              		.loc 1 110 17 is_stmt 1 view .LVU91
+ 396 0120 00E0     		b	.L24
+ 397              	.LVL34:
+ 398              	.L28:
+ 399              		.loc 1 110 17 is_stmt 0 view .LVU92
+ 400              	.LBE11:
+  84:Src/flash.c   **** 
+ 401              		.loc 1 84 19 view .LVU93
+ 402 0122 0120     		movs	r0, #1
+ 403              	.LVL35:
+ 404              	.L24:
+ 111:Src/flash.c   ****             }
+ 112:Src/flash.c   ****         }
+ 113:Src/flash.c   ****     }
+ 114:Src/flash.c   **** 
+ 115:Src/flash.c   ****     return status;
+ 405              		.loc 1 115 5 is_stmt 1 view .LVU94
+ 116:Src/flash.c   **** }
+ 406              		.loc 1 116 1 is_stmt 0 view .LVU95
+ 407              		@ sp needed
+ 408              	.LVL36:
+ 409              	.LVL37:
+ 410              		.loc 1 116 1 view .LVU96
+ 411 0124 70BD     		pop	{r4, r5, r6, pc}
+ 412              	.L30:
+ 413 0126 C046     		.align	2
+ 414              	.L29:
+ 415 0128 50C30000 		.word	50000
+ 416 012c 00200240 		.word	1073881088
+ 417              		.cfi_endproc
+ 418              	.LFE48:
+ 420              		.align	1
+ 421              		.global	My_FLASH_Unlock
+ 422              		.syntax unified
+ 423              		.code	16
+ 424              		.thumb_func
+ 426              	My_FLASH_Unlock:
+ 427              	.LFB45:
+  17:Src/flash.c   ****   My_StatusTypeDef status = My_OK;
+ 428              		.loc 1 17 1 is_stmt 1 view -0
+ 429              		.cfi_startproc
+ 430              		@ args = 0, pretend = 0, frame = 0
+ 431              		@ frame_needed = 0, uses_anonymous_args = 0
+ 432              		@ link register save eliminated.
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s 			page 12
+
+
+  18:Src/flash.c   **** 
+ 433              		.loc 1 18 3 view .LVU98
+ 434              	.LVL38:
+  20:Src/flash.c   ****   {
+ 435              		.loc 1 20 3 view .LVU99
+  20:Src/flash.c   ****   {
+ 436              		.loc 1 20 6 is_stmt 0 view .LVU100
+ 437 0130 084B     		ldr	r3, .L35
+ 438 0132 1B69     		ldr	r3, [r3, #16]
+  20:Src/flash.c   ****   {
+ 439              		.loc 1 20 5 view .LVU101
+ 440 0134 1B06     		lsls	r3, r3, #24
+ 441 0136 09D5     		bpl	.L33
+  23:Src/flash.c   ****     WRITE_REG(FLASH->KEYR, FLASH_KEY2);
+ 442              		.loc 1 23 5 is_stmt 1 view .LVU102
+ 443 0138 064B     		ldr	r3, .L35
+ 444 013a 074A     		ldr	r2, .L35+4
+ 445 013c 5A60     		str	r2, [r3, #4]
+  24:Src/flash.c   **** 
+ 446              		.loc 1 24 5 view .LVU103
+ 447 013e 074A     		ldr	r2, .L35+8
+ 448 0140 5A60     		str	r2, [r3, #4]
+  27:Src/flash.c   ****     {
+ 449              		.loc 1 27 5 view .LVU104
+  27:Src/flash.c   ****     {
+ 450              		.loc 1 27 8 is_stmt 0 view .LVU105
+ 451 0142 1B69     		ldr	r3, [r3, #16]
+  27:Src/flash.c   ****     {
+ 452              		.loc 1 27 7 view .LVU106
+ 453 0144 1B06     		lsls	r3, r3, #24
+ 454 0146 03D4     		bmi	.L34
+  18:Src/flash.c   **** 
+ 455              		.loc 1 18 20 view .LVU107
+ 456 0148 0020     		movs	r0, #0
+ 457 014a 00E0     		b	.L32
+ 458              	.L33:
+ 459 014c 0020     		movs	r0, #0
+ 460              	.L32:
+ 461              	.LVL39:
+  33:Src/flash.c   **** }
+ 462              		.loc 1 33 3 is_stmt 1 view .LVU108
+  34:Src/flash.c   **** 
+ 463              		.loc 1 34 1 is_stmt 0 view .LVU109
+ 464              		@ sp needed
+ 465 014e 7047     		bx	lr
+ 466              	.LVL40:
+ 467              	.L34:
+  29:Src/flash.c   ****     }
+ 468              		.loc 1 29 14 view .LVU110
+ 469 0150 0120     		movs	r0, #1
+ 470 0152 FCE7     		b	.L32
+ 471              	.L36:
+ 472              		.align	2
+ 473              	.L35:
+ 474 0154 00200240 		.word	1073881088
+ 475 0158 23016745 		.word	1164378403
+ 476 015c AB89EFCD 		.word	-839939669
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s 			page 13
+
+
+ 477              		.cfi_endproc
+ 478              	.LFE45:
+ 480              		.align	1
+ 481              		.global	DoErase
+ 482              		.syntax unified
+ 483              		.code	16
+ 484              		.thumb_func
+ 486              	DoErase:
+ 487              	.LFB49:
+ 117:Src/flash.c   **** 
+ 118:Src/flash.c   **** My_StatusTypeDef NOINLINE RAMFUNC DoErase(void)
+ 119:Src/flash.c   **** {
+ 488              		.loc 1 119 1 is_stmt 1 view -0
+ 489              		.cfi_startproc
+ 490              		@ args = 0, pretend = 0, frame = 16
+ 491              		@ frame_needed = 0, uses_anonymous_args = 0
+ 492 0160 F0B5     		push	{r4, r5, r6, r7, lr}
+ 493              	.LCFI4:
+ 494              		.cfi_def_cfa_offset 20
+ 495              		.cfi_offset 4, -20
+ 496              		.cfi_offset 5, -16
+ 497              		.cfi_offset 6, -12
+ 498              		.cfi_offset 7, -8
+ 499              		.cfi_offset 14, -4
+ 500 0162 85B0     		sub	sp, sp, #20
+ 501              	.LCFI5:
+ 502              		.cfi_def_cfa_offset 40
+ 120:Src/flash.c   **** 	/* Unlock the Flash to enable the flash control register access *************/
+ 121:Src/flash.c   ****   My_StatusTypeDef status = My_FLASH_Unlock();
+ 503              		.loc 1 121 3 view .LVU112
+ 504              		.loc 1 121 29 is_stmt 0 view .LVU113
+ 505 0164 FFF7FEFF 		bl	My_FLASH_Unlock
+ 506              	.LVL41:
+ 507 0168 041E     		subs	r4, r0, #0
+ 508              	.LVL42:
+ 122:Src/flash.c   ****   if (My_OK != status)
+ 509              		.loc 1 122 3 is_stmt 1 view .LVU114
+ 510              		.loc 1 122 6 is_stmt 0 view .LVU115
+ 511 016a 02D0     		beq	.L41
+ 512              	.LVL43:
+ 513              	.L38:
+ 123:Src/flash.c   ****     return status;
+ 124:Src/flash.c   **** 
+ 125:Src/flash.c   ****     /* Erase the user Flash area
+ 126:Src/flash.c   ****       (area defined by FLASH_USER_START_ADDR and FLASH_USER_END_ADDR) ***********/
+ 127:Src/flash.c   ****     /* Fill EraseInit structure*/
+ 128:Src/flash.c   ****     My_EraseInitTypeDef EraseInitStruct;
+ 129:Src/flash.c   **** 
+ 130:Src/flash.c   ****     EraseInitStruct.TypeErase = FLASH_TYPEERASE_PAGES;
+ 131:Src/flash.c   ****     EraseInitStruct.PageAddress = FLASH_USER_START_ADDR;
+ 132:Src/flash.c   ****     EraseInitStruct.NbPages = (FLASH_USER_END_ADDR - FLASH_USER_START_ADDR) / FLASH_PAGE_SIZE;
+ 133:Src/flash.c   **** 
+ 134:Src/flash.c   ****     My_LED_Off(LED6);
+ 135:Src/flash.c   ****     My_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_SET);
+ 136:Src/flash.c   **** 
+ 137:Src/flash.c   ****     uint32_t PageError = 0;
+ 138:Src/flash.c   **** 
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s 			page 14
+
+
+ 139:Src/flash.c   ****     enable_counter = 1;
+ 140:Src/flash.c   ****     status = EraseFlash(&EraseInitStruct, &PageError);
+ 141:Src/flash.c   ****     enable_counter = 0;
+ 142:Src/flash.c   **** 
+ 143:Src/flash.c   ****     if (My_OK != status)
+ 144:Src/flash.c   ****       return status;
+ 145:Src/flash.c   **** 
+ 146:Src/flash.c   ****     My_LED_Off(LED_GREEN);
+ 147:Src/flash.c   **** 
+ 148:Src/flash.c   ****     unsigned blinks = tickcounter / 8;
+ 149:Src/flash.c   ****     for (unsigned i = 0; i < blinks; ++i)
+ 150:Src/flash.c   ****     {
+ 151:Src/flash.c   ****         My_LED_On(LED_GREEN);
+ 152:Src/flash.c   ****         Delay(350);
+ 153:Src/flash.c   ****         My_LED_Off(LED_GREEN);
+ 154:Src/flash.c   ****         Delay(350);
+ 155:Src/flash.c   ****     }
+ 156:Src/flash.c   **** 
+ 157:Src/flash.c   ****     return status;
+ 158:Src/flash.c   **** 
+ 159:Src/flash.c   **** }
+ 514              		.loc 1 159 1 view .LVU116
+ 515 016c 2000     		movs	r0, r4
+ 516 016e 05B0     		add	sp, sp, #20
+ 517              		@ sp needed
+ 518 0170 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 519              	.LVL44:
+ 520              	.L41:
+ 128:Src/flash.c   **** 
+ 521              		.loc 1 128 5 is_stmt 1 view .LVU117
+ 130:Src/flash.c   ****     EraseInitStruct.PageAddress = FLASH_USER_START_ADDR;
+ 522              		.loc 1 130 5 view .LVU118
+ 130:Src/flash.c   ****     EraseInitStruct.PageAddress = FLASH_USER_START_ADDR;
+ 523              		.loc 1 130 31 is_stmt 0 view .LVU119
+ 524 0172 0026     		movs	r6, #0
+ 525 0174 0196     		str	r6, [sp, #4]
+ 131:Src/flash.c   ****     EraseInitStruct.NbPages = (FLASH_USER_END_ADDR - FLASH_USER_START_ADDR) / FLASH_PAGE_SIZE;
+ 526              		.loc 1 131 5 is_stmt 1 view .LVU120
+ 131:Src/flash.c   ****     EraseInitStruct.NbPages = (FLASH_USER_END_ADDR - FLASH_USER_START_ADDR) / FLASH_PAGE_SIZE;
+ 527              		.loc 1 131 33 is_stmt 0 view .LVU121
+ 528 0176 194B     		ldr	r3, .L42
+ 529 0178 0293     		str	r3, [sp, #8]
+ 132:Src/flash.c   **** 
+ 530              		.loc 1 132 5 is_stmt 1 view .LVU122
+ 132:Src/flash.c   **** 
+ 531              		.loc 1 132 29 is_stmt 0 view .LVU123
+ 532 017a 3023     		movs	r3, #48
+ 533 017c 0393     		str	r3, [sp, #12]
+ 134:Src/flash.c   ****     My_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_SET);
+ 534              		.loc 1 134 5 is_stmt 1 view .LVU124
+ 535 017e 0320     		movs	r0, #3
+ 536              	.LVL45:
+ 134:Src/flash.c   ****     My_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_SET);
+ 537              		.loc 1 134 5 is_stmt 0 view .LVU125
+ 538 0180 FFF74EFF 		bl	My_LED_Off
+ 539              	.LVL46:
+ 135:Src/flash.c   **** 
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s 			page 15
+
+
+ 540              		.loc 1 135 5 is_stmt 1 view .LVU126
+ 541 0184 8021     		movs	r1, #128
+ 542 0186 9020     		movs	r0, #144
+ 543 0188 0122     		movs	r2, #1
+ 544 018a 0902     		lsls	r1, r1, #8
+ 545 018c C005     		lsls	r0, r0, #23
+ 546 018e FFF7FEFF 		bl	My_GPIO_WritePin
+ 547              	.LVL47:
+ 137:Src/flash.c   **** 
+ 548              		.loc 1 137 5 view .LVU127
+ 137:Src/flash.c   **** 
+ 549              		.loc 1 137 14 is_stmt 0 view .LVU128
+ 550 0192 0096     		str	r6, [sp]
+ 139:Src/flash.c   ****     status = EraseFlash(&EraseInitStruct, &PageError);
+ 551              		.loc 1 139 5 is_stmt 1 view .LVU129
+ 139:Src/flash.c   ****     status = EraseFlash(&EraseInitStruct, &PageError);
+ 552              		.loc 1 139 20 is_stmt 0 view .LVU130
+ 553 0194 124D     		ldr	r5, .L42+4
+ 554 0196 0123     		movs	r3, #1
+ 555 0198 2B60     		str	r3, [r5]
+ 140:Src/flash.c   ****     enable_counter = 0;
+ 556              		.loc 1 140 5 is_stmt 1 view .LVU131
+ 140:Src/flash.c   ****     enable_counter = 0;
+ 557              		.loc 1 140 14 is_stmt 0 view .LVU132
+ 558 019a 6946     		mov	r1, sp
+ 559 019c 01A8     		add	r0, sp, #4
+ 560 019e FFF799FF 		bl	EraseFlash
+ 561              	.LVL48:
+ 562 01a2 041E     		subs	r4, r0, #0
+ 563              	.LVL49:
+ 141:Src/flash.c   **** 
+ 564              		.loc 1 141 5 is_stmt 1 view .LVU133
+ 141:Src/flash.c   **** 
+ 565              		.loc 1 141 20 is_stmt 0 view .LVU134
+ 566 01a4 2E60     		str	r6, [r5]
+ 143:Src/flash.c   ****       return status;
+ 567              		.loc 1 143 5 is_stmt 1 view .LVU135
+ 143:Src/flash.c   ****       return status;
+ 568              		.loc 1 143 8 is_stmt 0 view .LVU136
+ 569 01a6 E1D1     		bne	.L38
+ 146:Src/flash.c   **** 
+ 570              		.loc 1 146 5 is_stmt 1 view .LVU137
+ 571 01a8 0220     		movs	r0, #2
+ 572              	.LVL50:
+ 146:Src/flash.c   **** 
+ 573              		.loc 1 146 5 is_stmt 0 view .LVU138
+ 574 01aa FFF739FF 		bl	My_LED_Off
+ 575              	.LVL51:
+ 148:Src/flash.c   ****     for (unsigned i = 0; i < blinks; ++i)
+ 576              		.loc 1 148 5 is_stmt 1 view .LVU139
+ 148:Src/flash.c   ****     for (unsigned i = 0; i < blinks; ++i)
+ 577              		.loc 1 148 35 is_stmt 0 view .LVU140
+ 578 01ae 0D4B     		ldr	r3, .L42+8
+ 579 01b0 1F68     		ldr	r7, [r3]
+ 148:Src/flash.c   ****     for (unsigned i = 0; i < blinks; ++i)
+ 580              		.loc 1 148 14 view .LVU141
+ 581 01b2 FF08     		lsrs	r7, r7, #3
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s 			page 16
+
+
+ 582              	.LVL52:
+ 149:Src/flash.c   ****     {
+ 583              		.loc 1 149 5 is_stmt 1 view .LVU142
+ 584              	.LBB12:
+ 149:Src/flash.c   ****     {
+ 585              		.loc 1 149 10 view .LVU143
+ 149:Src/flash.c   ****     {
+ 586              		.loc 1 149 19 is_stmt 0 view .LVU144
+ 587 01b4 0025     		movs	r5, #0
+ 149:Src/flash.c   ****     {
+ 588              		.loc 1 149 5 view .LVU145
+ 589 01b6 0EE0     		b	.L39
+ 590              	.LVL53:
+ 591              	.L40:
+ 151:Src/flash.c   ****         Delay(350);
+ 592              		.loc 1 151 9 is_stmt 1 discriminator 3 view .LVU146
+ 593 01b8 0220     		movs	r0, #2
+ 594 01ba FFF721FF 		bl	My_LED_On
+ 595              	.LVL54:
+ 152:Src/flash.c   ****         My_LED_Off(LED_GREEN);
+ 596              		.loc 1 152 9 discriminator 3 view .LVU147
+ 597 01be AF26     		movs	r6, #175
+ 598 01c0 7600     		lsls	r6, r6, #1
+ 599 01c2 3000     		movs	r0, r6
+ 600 01c4 FFF7FEFF 		bl	Delay
+ 601              	.LVL55:
+ 153:Src/flash.c   ****         Delay(350);
+ 602              		.loc 1 153 9 discriminator 3 view .LVU148
+ 603 01c8 0220     		movs	r0, #2
+ 604 01ca FFF729FF 		bl	My_LED_Off
+ 605              	.LVL56:
+ 154:Src/flash.c   ****     }
+ 606              		.loc 1 154 9 discriminator 3 view .LVU149
+ 607 01ce 3000     		movs	r0, r6
+ 608 01d0 FFF7FEFF 		bl	Delay
+ 609              	.LVL57:
+ 149:Src/flash.c   ****     {
+ 610              		.loc 1 149 38 discriminator 3 view .LVU150
+ 611 01d4 0135     		adds	r5, r5, #1
+ 612              	.LVL58:
+ 613              	.L39:
+ 149:Src/flash.c   ****     {
+ 614              		.loc 1 149 28 discriminator 1 view .LVU151
+ 615 01d6 BD42     		cmp	r5, r7
+ 616 01d8 EED3     		bcc	.L40
+ 617 01da C7E7     		b	.L38
+ 618              	.L43:
+ 619              		.align	2
+ 620              	.L42:
+ 621 01dc 00800008 		.word	134250496
+ 622 01e0 00000000 		.word	enable_counter
+ 623 01e4 00000000 		.word	tickcounter
+ 624              	.LBE12:
+ 625              		.cfi_endproc
+ 626              	.LFE49:
+ 628              		.text
+ 629              	.Letext0:
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s 			page 17
+
+
+ 630              		.file 4 "c:\\arm-gnu-toolchain-12.3.rel1-mingw-w64-i686-arm-none-eabi\\arm-none-eabi\\include\\mac
+ 631              		.file 5 "c:\\arm-gnu-toolchain-12.3.rel1-mingw-w64-i686-arm-none-eabi\\arm-none-eabi\\include\\sys
+ 632              		.file 6 "Drivers/CMSIS/Device/ST/STM32F0xx/Include/stm32f072xb.h"
+ 633              		.file 7 "Drivers/CMSIS/Device/ST/STM32F0xx/Include/stm32f0xx.h"
+ 634              		.file 8 "Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_def.h"
+ 635              		.file 9 "Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_gpio.h"
+ 636              		.file 10 "Inc/flash.h"
+ 637              		.file 11 "Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal.h"
+ 638              		.file 12 "Inc/my_gpio.h"
+ARM GAS  C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s 			page 18
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 flash.c
+C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s:19     .RamFunc:00000000 $t
+C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s:24     .RamFunc:00000000 My_LED_On
+C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s:58     .RamFunc:00000018 $d
+C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s:63     .RamFunc:00000020 $t
+C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s:68     .RamFunc:00000020 My_LED_Off
+C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s:101    .RamFunc:00000038 $d
+C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s:106    .RamFunc:00000040 $t
+C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s:111    .RamFunc:00000040 WaitForLastFlashOperation
+C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s:224    .RamFunc:0000008c $d
+C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s:229    .RamFunc:00000094 $t
+C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s:234    .RamFunc:00000094 My_PageErase
+C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s:293    .RamFunc:000000cc $d
+C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s:298    .RamFunc:000000d4 $t
+C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s:303    .RamFunc:000000d4 EraseFlash
+C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s:415    .RamFunc:00000128 $d
+C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s:420    .RamFunc:00000130 $t
+C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s:426    .RamFunc:00000130 My_FLASH_Unlock
+C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s:474    .RamFunc:00000154 $d
+C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s:480    .RamFunc:00000160 $t
+C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s:486    .RamFunc:00000160 DoErase
+C:\Users\kurt\AppData\Local\Temp\cc6TD6xe.s:621    .RamFunc:000001dc $d
+
+UNDEFINED SYMBOLS
+My_GPIO_WritePin
+My_LED_PIN
+My_LED_PORT
+uwTick
+My_GPIO_TogglePin
+Delay
+enable_counter
+tickcounter
