@@ -17,10 +17,21 @@ using flash, the LED would flash eradically. After fixing the LED remains at a
 constantish flash.
 
 Moving functions to SRAM is fairly well documented online. The gist involves
-adding a RamFunc section to linker script. I added these as so to the data
-section.
+adding a RamFunc section to linker script, and tagging functions as part of the
+section. Functions can be tagged using this syntax:
 
+```c
+#define RAMFUNC __attribute__((section(".RamFunc"))) 
+
+void RAMFUNC exampleFunction(void)
+{
+
+}
 ```
+
+And here is an example of adding the necessary plumbing to the linker script:
+
+```ld
   .data : 
   {
     . = ALIGN(4);
@@ -49,7 +60,7 @@ reserved via the linker file which must be placed at exactly the start of SRAM,
 `0x2000_0000`. This is so that after remap the ISR will still be placed at
 `0x0000_0000`. Here is the relevant section of linker script to accomplish it.
 
-```
+```ld
   .ram_isr_vector 0x20000000 :
   {
     ram_isr_vector = .;
