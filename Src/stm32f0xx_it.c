@@ -132,7 +132,6 @@ RAMFUNC void SysTick_Handler(void)
     if (enable_counter) // && uwTick % 10 == 0)
     {
     	tickcounter++;
-    	My_LED_Toggle(LED5);
     }
 
 
@@ -164,7 +163,7 @@ void RAMFUNC TIM2_IRQHandler(void)
 	tick2++;
 	My_LED_Toggle(LED4);
 
-	TIM2->CCMR1 ^= (1U << TIM_CCMR1_OC1M_Pos);
+	// TIM2->CCMR1 ^= (1U << TIM_CCMR1_OC1M_Pos);
 }
 
 /* USER CODE END 1 */

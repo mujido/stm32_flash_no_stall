@@ -69,13 +69,13 @@ static My_StatusTypeDef FLASHAPI WaitForLastFlashOperation(uint32_t Timeout)
 static void NOINLINE FLASHAPI My_PageErase(uint32_t PageAddress)
 {
     /* Proceed to erase the page */
-	My_GPIO_TogglePin(GPIOB, GPIO_PIN_15);
+	// My_GPIO_TogglePin(GPIOB, GPIO_PIN_15);
     SET_BIT(FLASH->CR, FLASH_CR_PER);
 
-	My_GPIO_TogglePin(GPIOB, GPIO_PIN_15);
+	// My_GPIO_TogglePin(GPIOB, GPIO_PIN_15);
     WRITE_REG(FLASH->AR, PageAddress);
 
-	My_GPIO_TogglePin(GPIOB, GPIO_PIN_15);
+	// My_GPIO_TogglePin(GPIOB, GPIO_PIN_15);
     SET_BIT(FLASH->CR, FLASH_CR_STRT);
 }
 
@@ -118,12 +118,12 @@ static My_StatusTypeDef NOINLINE FLASHAPI EraseFlash(My_EraseInitTypeDef *pErase
 My_StatusTypeDef NOINLINE RAMFUNC DoErase(void)
 {
 	/* Unlock the Flash to enable the flash control register access *************/
-  My_StatusTypeDef status = My_FLASH_Unlock();
-  if (My_OK != status)
-    return status;
+    My_StatusTypeDef status = My_FLASH_Unlock();
+    if (My_OK != status)
+        return status;
 
     /* Erase the user Flash area
-      (area defined by FLASH_USER_START_ADDR and FLASH_USER_END_ADDR) ***********/
+        (area defined by FLASH_USER_START_ADDR and FLASH_USER_END_ADDR) ***********/
     /* Fill EraseInit structure*/
     My_EraseInitTypeDef EraseInitStruct;
 
@@ -132,28 +132,9 @@ My_StatusTypeDef NOINLINE RAMFUNC DoErase(void)
     EraseInitStruct.NbPages = (FLASH_USER_END_ADDR - FLASH_USER_START_ADDR) / FLASH_PAGE_SIZE;
 
     My_LED_Off(LED6);
-    My_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_SET);
 
     uint32_t PageError = 0;
-
-    enable_counter = 1;
     status = EraseFlash(&EraseInitStruct, &PageError);
-    enable_counter = 0;
-
-    if (My_OK != status)
-      return status;
-
-    My_LED_Off(LED_GREEN);
-
-    unsigned blinks = tickcounter / 8;
-    for (unsigned i = 0; i < blinks; ++i)
-    {
-        My_LED_On(LED_GREEN);
-        Delay(350);
-        My_LED_Off(LED_GREEN);
-        Delay(350);
-    }
 
     return status;
-
 }
