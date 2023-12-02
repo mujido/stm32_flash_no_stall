@@ -7,10 +7,12 @@ GPIO_TypeDef* My_LED_PORT[LEDn] = {LED3_GPIO_PORT,
                                 LED5_GPIO_PORT,
                                 LED6_GPIO_PORT};
 
-const uint16_t My_LED_PIN[LEDn] = {LED3_PIN,
-                                LED4_PIN,
-                                LED5_PIN,
-                                LED6_PIN};
+uint16_t My_LED_PIN[LEDn] = {
+  LED3_PIN,
+  LED4_PIN,
+  LED5_PIN,
+  LED6_PIN
+};
 
 void My_LED_Init(Led_TypeDef Led)
 {

@@ -48,7 +48,7 @@ typedef enum
 } Led_TypeDef;
 
 extern GPIO_TypeDef* My_LED_PORT[LEDn];
-extern const uint16_t My_LED_PIN[LEDn];
+extern uint16_t My_LED_PIN[LEDn];
 
 static inline void RAMFUNC My_LED_On(Led_TypeDef Led)
 {
