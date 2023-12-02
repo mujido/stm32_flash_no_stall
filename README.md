@@ -53,7 +53,7 @@ reserved via the linker file which must be placed at exactly the start of SRAM,
   .ram_isr_vector 0x20000000 :
   {
     ram_isr_vector = .;
-  	. += SIZEOF(.isr_vector);
-  	ram_isr_vector_end = .;
+    . += SIZEOF(.isr_vector);
+    ram_isr_vector_end = .;
   } >RAM
 ```
