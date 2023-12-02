@@ -1,84 +1,59 @@
-/**
-  @page FLASH_EraseProgram FLASH Erase and Program example
-  
-  @verbatim
-  ******************** (C) COPYRIGHT 2016 STMicroelectronics *******************
-  * @file    FLASH/FLASH_EraseProgram/readme.txt
-  * @author  MCD Application Team
-  * @brief   Description of the FLASH Erase and Program example.
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2016 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  @endverbatim
+# Erase Flash without blocking execution on Cortex-M0
 
-@par Example Description 
+This is an example based loosely on the STM32 HAL flash Erase Pages example.
+Flash erase normally will block execution of flash-based code during erase
+cycle. One can run directly from RAM to avoid this. 
 
-How to configure and use the FLASH HAL API to erase and program the internal
-Flash memory.
-  
-At the beginning of the main program the HAL_Init() function is called to reset 
-all the peripherals, initialize the Flash interface and the systick.
-Then the SystemClock_Config() function is used to configure the system clock (SYSCLK) 
-to run at 48 MHz. 
+For this reason, I wanted to try to make a hybrid firmware where some code would
+run from flash primarily but run from RAM the sections required during the flash
+erase cycles. The basic sequence is system initialization, call DoErase() where
+all this code and its dependencies run from SRAM and therefore don't block.
+After return from DoErase(), the code continues executing from flash. 
 
-After Reset, the Flash memory Program/Erase Controller is locked. A dedicated function
-is used to enable the FLASH control register access.
-Before programming the desired addresses, an erase operation is performed using 
-the flash erase page feature. The erase procedure is done by filling the erase init 
-structure giving the starting erase page and the number of pages to erase.
-At this stage, all these pages will be erased one by one separately.
+Notably the SysTick and TIM2 timer IRQ handlers also run from SRAM from
+initialization as well. This is demonstrated by LED4 (Orange LED on STM
+32F072BDISCOVERY) which flashes at a 50kHz rate. When I had a bug with something
+using flash, the LED would flash eradically. After fixing the LED remains at a
+constantish flash.
 
-@note: if problem occurs on a page, erase will be stopped and faulty page will 
-be returned to user (through variable 'pageError').
+Moving functions to SRAM is fairly well documented online. The gist involves
+adding a RamFunc section to linker script. I added these as so to the data
+section.
 
-Once this operation is finished, page word programming operation will be performed 
-in the Flash memory. The written data is then read back and checked.
-
-The STM32F072B-Discovery RevC board LEDs can be used to monitor the transfer status:
- - LED3 is ON when there are no errors detected after data programming 
- - LED4 is ON when there are errors detected after data programming 
- - LED5 is ON when there is an issue during erase or program procedure
-
-@note Care must be taken when using HAL_Delay(), this function provides accurate delay (in milliseconds)
-      based on variable incremented in SysTick ISR. This implies that if HAL_Delay() is called from
-      a peripheral ISR process, then the SysTick interrupt must have higher priority (numerically lower)
-      than the peripheral interrupt. Otherwise the caller ISR process will be blocked.
-      To change the SysTick interrupt priority you have to use HAL_NVIC_SetPriority() function.
-      
-@note The application need to ensure that the SysTick time base is always set to 1 millisecond
-      to have correct HAL operation.
-
-@par Directory contents 
-
-  - FLASH/FLASH_EraseProgram/Inc/stm32f0xx_hal_conf.h        HAL Configuration file  
-  - FLASH/FLASH_EraseProgram/Inc/stm32f0xx_it.h              Header for stm32f0xx_it.c
-  - FLASH/FLASH_EraseProgram/Inc/main.h                      Header for main.c module 
-  - FLASH/FLASH_EraseProgram/Src/stm32f0xx_it.c              Interrupt handlers
-  - FLASH/FLASH_EraseProgram/Src/main.c                      Main program
-  - FLASH/FLASH_EraseProgram/Src/system_stm32f0xx.c          STM32F0xx system clock configuration file
-
-@par Hardware and Software environment
-
-  - This example runs on STM32F072RB devices.
+```
+  .data : 
+  {
+    . = ALIGN(4);
+    _sdata = .;        /* create a global symbol at data start */
+    *(.data)           /* .data sections */
+    *(.data*)          /* .data* sections */
     
-  - This example has been tested with STM32F072B-Discovery RevC board and can be
-    easily tailored to any other supported device and development board.
-      
-@par How to use it ? 
+    . = ALIGN(4);
+    *(.RamFunc)
+    *(.RamFunc*)
+    
+    . = ALIGN(4);
+    _edata = .;        /* define a global symbol at data end */
+  } >RAM AT> FLASH
+```
 
-In order to make the program work, you must do the following:
- - Open your preferred toolchain 
- - Rebuild all files and load your image into target memory
- - Run the example
+By adding it to the `.data` section, we automatically copy the functions to SRAM
+at startup using the normal data initialization startup code.
 
+Unlike some easier to use chips, the Cortex-M0 series do not have a relocatable
+ISR vector via a mechanism like `VTOR`. It does however have a means of
+remapping the base of memory (`0x0000_0000`) to one of flash, SRAM, or system
+memory. This project uses this mechanism, via `SYSCFG->CFGR1` `MEM_MODE` bits.
+In the `SystemInit()` function, we copy the ISR vector to a section of RAM
+reserved via the linker file which must be placed at exactly the start of SRAM,
+`0x2000_0000`. This is so that after remap the ISR will still be placed at
+`0x0000_0000`. Here is the relevant section of linker script to accomplish it.
 
-
- */
+```
+  .ram_isr_vector 0x20000000 :
+  {
+    ram_isr_vector = .;
+  	. += SIZEOF(.isr_vector);
+  	ram_isr_vector_end = .;
+  } >RAM
+```
