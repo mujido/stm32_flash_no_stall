@@ -1,0 +1,36 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations":
+    [
+        {
+            "name": "debug",
+            "cwd": "${workspaceRoot}",
+            "executable": "./build/flash_erase_no_stall_makefile.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "device": "STM32F072RB",
+            "interface": "swd",
+            "runToEntryPoint": "main",
+            "preLaunchTask": "Build all",
+            "v1": false,
+            "svdFile": "${workspaceRoot}/svd/STM32F072x.svd", // Include svd to watch device peripherals
+            "configFiles": [
+                "interface/stlink.cfg",
+                "target/stm32f0x.cfg"
+            ],
+            // "swoConfig": {
+            //     "enabled": true,
+            //     "cpuFrequency": 8000000,
+            //     "swoFrequency": 2000000,
+            //     "source": "probe",
+            //     "decoders": [
+            //         { "type": "console", "label": "ITM", "port": 0 }
+            //     ]
+            // }
+        }
+    ]
+}
